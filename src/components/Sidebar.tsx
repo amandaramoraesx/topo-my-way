@@ -9,7 +9,7 @@ const navItems = [
   { section: "Ferramentas" },
   { id: "topogeo" as const, icon: "📐", label: "TopoGEO v2", badge: "PRONTO", badgeType: "ok" },
   { id: "exigencia" as const, icon: "⚖️", label: "Exigência Zero", badge: "PRONTO", badgeType: "ok" },
-  { id: "orcamento" as const, icon: "📋", label: "Orçamento IA", badge: "NOVO", badgeType: "new" },
+  { id: "orcamento" as const, icon: "📋", label: "Orçamentos", badge: "NOVO", badgeType: "new" },
   { id: "laudos" as const, icon: "📄", label: "Laudos & Perícias", badge: "NOVO", badgeType: "new" },
   { section: "Gestão" },
   { id: "financeiro" as const, icon: "💰", label: "Financeiro", badge: "NOVO", badgeType: "new" },
