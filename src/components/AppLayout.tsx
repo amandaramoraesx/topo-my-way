@@ -1,6 +1,8 @@
+import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
 import { useApp } from "@/context/AppContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 import DashboardView from "@/views/DashboardView";
 import TopoGeoView from "@/views/TopoGeoView";
 import ExigenciaView from "@/views/ExigenciaView";
@@ -28,14 +30,16 @@ const viewComponents: Record<string, React.ComponentType> = {
 
 export default function AppLayout() {
   const { currentView } = useApp();
+  const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const ViewComponent = viewComponents[currentView] || PlaceholderView;
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="ml-[var(--sidebar-width)] flex-1 flex flex-col min-h-screen">
-        <Topbar />
-        <div className="p-6 flex-1">
+      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className={`flex-1 flex flex-col min-h-screen ${!isMobile ? "ml-[var(--sidebar-width)]" : ""}`}>
+        <Topbar onMenuClick={() => setSidebarOpen(true)} />
+        <div className="p-3 md:p-6 flex-1 overflow-x-hidden">
           <ViewComponent />
         </div>
       </div>
