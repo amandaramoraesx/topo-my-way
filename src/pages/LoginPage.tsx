@@ -29,9 +29,7 @@ export default function LoginPage({ onToggle }: { onToggle: () => void }) {
       <div className="w-full max-w-md">
         <div className="bg-card/60 backdrop-blur-xl border border-border/50 rounded-2xl p-8 shadow-2xl">
           <div className="text-center mb-8">
-            <div className="font-mono-display text-[10px] text-primary tracking-widest uppercase mb-1">
-              ▲ Rodrigues Topografia
-            </div>
+            <img src="/logo-topogeo.png" alt="TopoGEO" className="w-16 h-16 mx-auto mb-3 rounded-xl object-contain bg-white/10 p-1" />
             <h1 className="text-2xl font-bold text-foreground">Entrar no Hub</h1>
             <p className="text-sm text-muted-foreground mt-1">Acesse sua plataforma de topografia</p>
           </div>
