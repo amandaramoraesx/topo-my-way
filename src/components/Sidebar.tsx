@@ -49,10 +49,12 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
   const sidebarContent = (
     <>
       <div className="px-4 py-[18px] border-b border-border/50 flex items-center justify-between">
-        <div>
-          <div className="font-mono-display text-[10px] text-primary tracking-widest uppercase">▲ Rodrigues Topografia</div>
-          <div className="text-[15px] font-bold text-foreground mt-0.5 leading-tight">Hub Central</div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">Topógrafo Credenciado INCRA</div>
+        <div className="flex items-center gap-2.5">
+          <img src="/logo-topogeo.png" alt="TopoGEO" className="w-9 h-9 rounded-lg object-contain bg-white/10 p-0.5" />
+          <div>
+            <div className="text-[14px] font-bold text-foreground leading-tight">TOPOGEO</div>
+            <div className="text-[10px] text-muted-foreground">soluções</div>
+          </div>
         </div>
         {isMobile && (
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-secondary text-muted-foreground">
