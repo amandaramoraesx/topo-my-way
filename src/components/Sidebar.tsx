@@ -50,7 +50,7 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
     <>
       <div className="px-4 py-[18px] border-b border-border/50 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <img src="/logo-topogeo.png" alt="TopoGEO" className="w-9 h-9 rounded-lg object-contain bg-white/10 p-0.5" />
+          <img src="/logo-topogeo.png" alt="TopoGEO" className="w-9 h-9 rounded-lg object-contain" />
           <div>
             <div className="text-[14px] font-bold text-foreground leading-tight">TOPOGEO</div>
             <div className="text-[10px] text-muted-foreground">soluções</div>
