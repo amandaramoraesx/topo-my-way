@@ -8,118 +8,141 @@ export default function DashboardView() {
   const ano = new Date().getFullYear();
   const rec = financas.filter(f => f.tipo === "receita" && new Date(f.data).getMonth() === mes && new Date(f.data).getFullYear() === ano).reduce((s, f) => s + f.valor, 0);
 
-  const tools = [
-    { id: "topogeo", icon: "📐", name: "TopoGEO v2", desc: "Memorial descritivo, planta, volumes, DXF, ODS SIGEF", status: "✓ Pronto", statusClass: "bg-success/15 text-success" },
-    { id: "exigencia", icon: "⚖️", name: "Exigência Zero", desc: "Resolve exigências de cartório com IA em segundos", status: "✓ Pronto", statusClass: "bg-success/15 text-success" },
-    { id: "orcamento", icon: "📋", name: "Orçamento IA", desc: "Gera proposta profissional para qualquer serviço", status: "✦ Novo", statusClass: "bg-primary/15 text-primary" },
-    { id: "laudos", icon: "📄", name: "Laudos & Perícias", desc: "Laudos técnicos padrão ABNT gerados com IA", status: "✦ Novo", statusClass: "bg-primary/15 text-primary" },
-    { id: "financeiro", icon: "💰", name: "Financeiro", desc: "Receitas, despesas, margem por tipo de serviço", status: "✦ Novo", statusClass: "bg-primary/15 text-primary" },
-    { id: "instagram", icon: "📸", name: "Instagram IA", desc: "Conteúdo profissional para redes sociais com IA", status: "✦ Novo", statusClass: "bg-primary/15 text-primary" },
+  const stats = [
+    { value: ativos, label: "Ativos", icon: "📁", color: "text-accent" },
+    { value: exig, label: "Exigências", icon: "⚠️", color: "text-warning" },
+    { value: `R$${rec.toLocaleString("pt-BR", { minimumFractionDigits: 0 })}`, label: "Receita", icon: "💰", color: "text-success" },
   ];
 
-  const phases = [
-    { label: "Fase 1 — Ferramentas IA", pct: 100, color: "bg-success", textColor: "text-success" },
-    { label: "Fase 2 — Agentes no Navegador", pct: 20, color: "bg-accent", textColor: "text-accent" },
-    { label: "Fase 3 — Comunicação & Portal", pct: 5, color: "bg-purple", textColor: "text-purple" },
-    { label: "Fase 4 — Empresa Autônoma", pct: 2, color: "bg-muted-foreground", textColor: "text-muted-foreground" },
+  const tools = [
+    { id: "topogeo", icon: "📐", name: "TopoGEO v2", desc: "Memorial, planta, DXF, SIGEF", badge: "Pronto", badgeCls: "bg-success/15 text-success" },
+    { id: "exigencia", icon: "⚖️", name: "Exigência Zero", desc: "Exigências com IA", badge: "Pronto", badgeCls: "bg-success/15 text-success" },
+    { id: "orcamento", icon: "📋", name: "Orçamentos", desc: "Propostas profissionais", badge: "Novo", badgeCls: "bg-primary/15 text-primary" },
+    { id: "laudos", icon: "📄", name: "Laudos & Perícias", desc: "Laudos ABNT com IA", badge: "Novo", badgeCls: "bg-primary/15 text-primary" },
+    { id: "financeiro", icon: "💰", name: "Financeiro", desc: "Receitas e despesas", badge: "Novo", badgeCls: "bg-primary/15 text-primary" },
+    { id: "instagram", icon: "📸", name: "Instagram IA", desc: "Conteúdo para redes", badge: "Novo", badgeCls: "bg-primary/15 text-primary" },
+  ];
+
+  const agents = [
+    { id: "agente-sigef" as const, icon: "🤖", name: "Agente SIGEF", badge: "Ativo", badgeCls: "bg-success/15 text-success" },
+    { icon: "🏛️", name: "Agente Cartório", badge: "Fase 2", badgeCls: "bg-accent/15 text-accent", disabled: true },
+    { icon: "🌿", name: "Licenciamento", badge: "Fase 3", badgeCls: "bg-purple/15 text-purple", disabled: true },
   ];
 
   const statusMap: Record<string, string> = { em_andamento: "Em Andamento", exigencia: "Exigência", aguardando: "Aguardando", concluido: "Concluído" };
   const statusBadge: Record<string, string> = { em_andamento: "bg-accent/20 text-accent", exigencia: "bg-warning/20 text-warning", aguardando: "bg-gold/20 text-gold", concluido: "bg-success/20 text-success" };
 
+  const phases = [
+    { label: "Fase 1 — Ferramentas IA", pct: 100, color: "bg-success" },
+    { label: "Fase 2 — Agentes", pct: 20, color: "bg-accent" },
+    { label: "Fase 3 — Comunicação", pct: 5, color: "bg-purple" },
+    { label: "Fase 4 — Autônoma", pct: 2, color: "bg-muted-foreground" },
+  ];
+
   return (
-    <div>
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
-        {[
-          { value: ativos, label: "Projetos Ativos", color: "", sub: "cadastre projetos" },
-          { value: exig, label: "Exigências Pendentes", color: "text-warning", sub: "verifique sempre" },
-          { value: `R$${rec.toLocaleString("pt-BR", { minimumFractionDigits: 0 })}`, label: "Receita do Mês", color: "text-success", sub: "financeiro" },
-          { value: "14", label: "Automações Mapeadas", color: "text-primary", sub: "4 fases ativas" },
-        ].map((s, i) => (
-          <div key={i} className="bg-card border border-border rounded-xl p-5">
-            <div className={`text-3xl font-bold font-mono ${s.color}`}>{s.value}</div>
-            <div className="text-xs text-muted-foreground mt-1">{s.label}</div>
-            <div className="text-[11px] mt-2 px-2 py-0.5 rounded bg-success/10 text-success inline-block">{s.sub}</div>
+    <div className="space-y-5 pb-6">
+      {/* Stats row - horizontal scroll on mobile */}
+      <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1 snap-x">
+        {stats.map((s, i) => (
+          <div key={i} className="min-w-[120px] flex-1 bg-card border border-border rounded-xl p-4 snap-start">
+            <div className="text-lg mb-1">{s.icon}</div>
+            <div className={`text-2xl md:text-3xl font-bold font-mono ${s.color}`}>{s.value}</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">{s.label}</div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-5">
-        {/* Tools */}
-        <div>
-          <h2 className="text-xl font-bold mb-3.5">Ferramentas Disponíveis</h2>
-          <div className="grid grid-cols-2 gap-3 mb-3">
-            {tools.map(t => (
-              <div key={t.id} onClick={() => setCurrentView(t.id as any)} className="bg-card border border-border rounded-xl p-5 cursor-pointer flex flex-col gap-2.5 transition-all hover:border-primary hover:bg-secondary hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,212,170,.1)]">
-                <div className="text-[26px]">{t.icon}</div>
-                <div className="font-bold text-sm">{t.name}</div>
-                <div className="text-xs text-muted-foreground leading-relaxed">{t.desc}</div>
-                <div className={`text-[10px] font-bold px-2 py-0.5 rounded self-start uppercase tracking-wide ${t.statusClass}`}>{t.status}</div>
-              </div>
-            ))}
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { id: "agente-sigef", icon: "🤖", name: "Agente SIGEF", desc: "Gerencie processos INCRA", status: "Ativo", cls: "bg-success/15 text-success" },
-              { icon: "🏛️", name: "Agente Cartório", desc: "Age dentro do site do cartório", status: "Fase 2", cls: "bg-accent/15 text-accent", disabled: true },
-              { icon: "🌿", name: "Licenciamento Amb.", desc: "Gera RAS, EAS, EIA e checklists", status: "Fase 3", cls: "bg-purple/15 text-purple", disabled: true },
-            ].map((t, i) => (
-              <div key={i} onClick={() => t.id && setCurrentView(t.id as any)} className={`bg-card border border-border rounded-xl p-5 flex flex-col gap-2.5 transition-all ${t.disabled ? "opacity-45 cursor-not-allowed" : "cursor-pointer hover:border-primary hover:bg-secondary hover:-translate-y-0.5"}`}>
-                <div className="text-[26px]">{t.icon}</div>
-                <div className="font-bold text-sm">{t.name}</div>
-                <div className="text-xs text-muted-foreground leading-relaxed">{t.desc}</div>
-                <div className={`text-[10px] font-bold px-2 py-0.5 rounded self-start ${t.cls}`}>{t.status}</div>
-              </div>
-            ))}
-          </div>
+      {/* Tools grid - 2 cols on mobile, 3 on md */}
+      <div>
+        <h2 className="text-base font-bold mb-3">Ferramentas</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {tools.map(t => (
+            <button
+              key={t.id}
+              onClick={() => setCurrentView(t.id as any)}
+              className="bg-card border border-border rounded-xl p-4 text-left flex flex-col gap-2 transition-all active:scale-[0.97] hover:border-primary hover:bg-secondary min-h-[120px]"
+            >
+              <div className="text-2xl">{t.icon}</div>
+              <div className="font-bold text-[13px] leading-tight">{t.name}</div>
+              <div className="text-[11px] text-muted-foreground leading-snug flex-1">{t.desc}</div>
+              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded self-start uppercase tracking-wider ${t.badgeCls}`}>
+                {t.badge}
+              </span>
+            </button>
+          ))}
         </div>
+      </div>
 
-        {/* Right column */}
-        <div>
-          <h2 className="text-xl font-bold mb-3.5">Projetos Recentes</h2>
-          <div className="bg-card border border-border rounded-xl overflow-hidden mb-5">
-            {projetos.length === 0 ? (
-              <div className="p-10 text-center text-muted-foreground text-[13px]">
-                <div className="text-[28px] mb-2">📁</div>
-                Nenhum projeto cadastrado ainda.<br />
-                <span onClick={() => setCurrentView("projetos")} className="text-primary cursor-pointer">Cadastrar projeto →</span>
-              </div>
-            ) : (
-              projetos.slice(0, 6).map(p => (
-                <div key={p.id} className="flex items-center justify-between px-3.5 py-2.5 border-b border-border">
-                  <div>
-                    <div className="text-[13px] font-semibold">{p.nome}</div>
-                    <div className="text-[11px] text-muted-foreground">{p.tipo} · {p.cliente || "—"}</div>
-                  </div>
-                  <div className="text-right">
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${statusBadge[p.status] || "bg-accent/20 text-accent"}`}>
-                      {statusMap[p.status] || p.status}
-                    </span>
-                    <div className="text-[11px] text-muted-foreground mt-0.5">{p.prazo || "—"}</div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+      {/* Agents */}
+      <div>
+        <h2 className="text-base font-bold mb-3">Agentes IA</h2>
+        <div className="grid grid-cols-3 gap-3">
+          {agents.map((a, i) => (
+            <button
+              key={i}
+              onClick={() => a.id && setCurrentView(a.id as any)}
+              disabled={a.disabled}
+              className={`bg-card border border-border rounded-xl p-3.5 text-left flex flex-col items-center gap-1.5 transition-all
+                ${a.disabled ? "opacity-40 cursor-not-allowed" : "active:scale-[0.97] hover:border-primary hover:bg-secondary"}`}
+            >
+              <div className="text-2xl">{a.icon}</div>
+              <div className="font-bold text-[11px] text-center leading-tight">{a.name}</div>
+              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${a.badgeCls}`}>
+                {a.badge}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
 
-          <div className="h-px bg-border my-4" />
-          <h2 className="text-xl font-bold mb-3.5">Mapa de Progresso</h2>
-          <div className="bg-card border border-border rounded-xl p-5">
-            <div className="flex flex-col gap-3">
-              {phases.map((ph, i) => (
-                <div key={i}>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span>{ph.label}</span>
-                    <span className={ph.textColor}>{ph.pct === 100 ? "100%" : ph.pct > 10 ? "Em construção" : ph.pct > 3 ? "Em breve" : "Visão futura"}</span>
-                  </div>
-                  <div className="h-1 bg-border rounded-sm overflow-hidden">
-                    <div className={`h-full rounded-sm transition-all ${ph.color}`} style={{ width: `${ph.pct}%` }} />
-                  </div>
-                </div>
-              ))}
+      {/* Projetos recentes */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-bold">Projetos Recentes</h2>
+          <button onClick={() => setCurrentView("projetos")} className="text-[11px] text-primary font-semibold">
+            Ver todos →
+          </button>
+        </div>
+        <div className="bg-card border border-border rounded-xl overflow-hidden">
+          {projetos.length === 0 ? (
+            <div className="p-8 text-center text-muted-foreground text-[13px]">
+              <div className="text-2xl mb-2">📁</div>
+              Nenhum projeto cadastrado.<br />
+              <button onClick={() => setCurrentView("projetos")} className="text-primary font-semibold mt-1 inline-block">
+                Cadastrar projeto →
+              </button>
             </div>
-          </div>
+          ) : (
+            projetos.slice(0, 4).map(p => (
+              <div key={p.id} className="flex items-center justify-between px-4 py-3 border-b border-border last:border-b-0">
+                <div className="min-w-0 flex-1 mr-3">
+                  <div className="text-[13px] font-semibold truncate">{p.nome}</div>
+                  <div className="text-[11px] text-muted-foreground truncate">{p.tipo} · {p.cliente || "—"}</div>
+                </div>
+                <span className={`text-[10px] font-bold px-2 py-1 rounded whitespace-nowrap ${statusBadge[p.status] || "bg-accent/20 text-accent"}`}>
+                  {statusMap[p.status] || p.status}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Mapa de Progresso */}
+      <div>
+        <h2 className="text-base font-bold mb-3">Progresso</h2>
+        <div className="bg-card border border-border rounded-xl p-4 space-y-3">
+          {phases.map((ph, i) => (
+            <div key={i}>
+              <div className="flex justify-between text-[11px] mb-1">
+                <span className="text-muted-foreground">{ph.label}</span>
+                <span className="font-mono text-foreground">{ph.pct}%</span>
+              </div>
+              <div className="h-1.5 bg-border rounded-full overflow-hidden">
+                <div className={`h-full rounded-full transition-all ${ph.color}`} style={{ width: `${ph.pct}%` }} />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
