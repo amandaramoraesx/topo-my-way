@@ -101,7 +101,23 @@ serve(async (req) => {
 
 Gere um memorial descritivo completo, técnico e formal, usando os dados fornecidos.
 
-${templateContent ? `IMPORTANTE: Use o seguinte modelo como REFERÊNCIA DE ESTILO E FORMATO. Siga a mesma estrutura, linguagem e formatação do modelo abaixo, adaptando apenas os dados:\n\n--- MODELO DE REFERÊNCIA ---\n${templateContent}\n--- FIM DO MODELO ---` : "Use o formato padrão INCRA/SIGEF para memoriais descritivos."}
+${templateContent ? `REGRA OBRIGATÓRIA — SIGA O MODELO DE REFERÊNCIA COM EXATIDÃO:
+Você DEVE reproduzir FIELMENTE o modelo de referência abaixo. Copie exatamente:
+- A estrutura e ordem das seções (cabeçalho, corpo, encerramento)
+- O layout e espaçamento entre parágrafos
+- A tipografia: palavras, números e trechos em **negrito** devem permanecer em negrito
+- A formatação de coordenadas, azimutes e distâncias (casas decimais, símbolos, unidades)
+- O estilo de linguagem, vocabulário técnico e fraseologia
+- A pontuação, capitalização e abreviações
+- Os títulos e subtítulos exatamente como aparecem no modelo
+- A forma de citar confrontantes, marcos e vértices
+
+NÃO invente seções extras. NÃO altere a ordem. NÃO mude o estilo de escrita.
+Apenas substitua os dados do modelo pelos dados reais fornecidos pelo usuário.
+
+--- MODELO DE REFERÊNCIA (COPIE O FORMATO EXATO) ---
+${templateContent}
+--- FIM DO MODELO DE REFERÊNCIA ---` : "Use o formato padrão INCRA/SIGEF para memoriais descritivos."}
 
 O memorial deve incluir:
 1. Cabeçalho com dados do imóvel e proprietário
