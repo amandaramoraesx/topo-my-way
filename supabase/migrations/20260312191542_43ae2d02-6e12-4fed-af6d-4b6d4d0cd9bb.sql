@@ -1,0 +1,1 @@
+ALTER TABLE public.employees ADD COLUMN work_hours_per_day numeric NOT NULL DEFAULT 8;

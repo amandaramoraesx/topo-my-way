@@ -11,6 +11,7 @@ interface Employee {
   email: string;
   salary: number;
   active: boolean;
+  work_hours_per_day: number;
 }
 
 interface TimeRecord {
@@ -36,7 +37,7 @@ interface Payment {
 export default function FuncionariosView() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [tab, setTab] = useState<"cadastro" | "ponto" | "pagamentos">("cadastro");
+  const [tab, setTab] = useState<"cadastro" | "ponto" | "pagamentos" | "horas-extras">("cadastro");
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [timeRecords, setTimeRecords] = useState<TimeRecord[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
@@ -48,6 +49,7 @@ export default function FuncionariosView() {
   const [empPhone, setEmpPhone] = useState("");
   const [empEmail, setEmpEmail] = useState("");
   const [empSalary, setEmpSalary] = useState("");
+  const [empWorkHours, setEmpWorkHours] = useState("8");
 
   const [selEmployee, setSelEmployee] = useState("");
   const [pontoDate, setPontoDate] = useState(new Date().toISOString().slice(0, 10));
@@ -62,7 +64,8 @@ export default function FuncionariosView() {
   const [payDate, setPayDate] = useState(new Date().toISOString().slice(0, 10));
   const [payDesc, setPayDesc] = useState("");
   const [payType, setPayType] = useState("salario");
-
+  const [horasFilterEmployee, setHorasFilterEmployee] = useState("");
+  const [horasMonth, setHorasMonth] = useState(new Date().toISOString().slice(0, 7));
   useEffect(() => { loadData(); }, []);
 
   async function loadData() {
@@ -90,7 +93,7 @@ export default function FuncionariosView() {
     });
     if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
     toast({ title: "✅ Funcionário cadastrado!" });
-    setEmpName(""); setEmpPhone(""); setEmpEmail(""); setEmpSalary("");
+    setEmpName(""); setEmpPhone(""); setEmpEmail(""); setEmpSalary(""); setEmpWorkHours("8");
     loadData();
   }
 
@@ -151,9 +154,59 @@ export default function FuncionariosView() {
     if (!ts) return "—";
     return new Date(ts).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
   };
+  const fmtHours = (h: number) => {
+    const hrs = Math.floor(h);
+    const mins = Math.round((h - hrs) * 60);
+    return `${hrs}h${mins > 0 ? String(mins).padStart(2, "0") + "min" : ""}`;
+  };
 
-  const tabs = ["cadastro", "ponto", "pagamentos"] as const;
-  const tabLabels = { cadastro: "👥 Cadastro", ponto: "⏰ Ponto", pagamentos: "💵 Pagamentos" };
+  // Calculate worked hours for a time record
+  function calcWorkedHours(tr: TimeRecord): number {
+    if (!tr.clock_in || !tr.clock_out) return 0;
+    const cin = new Date(tr.clock_in).getTime();
+    const cout = new Date(tr.clock_out).getTime();
+    let total = (cout - cin) / 3600000; // hours
+    if (tr.lunch_out && tr.lunch_in) {
+      const lout = new Date(tr.lunch_out).getTime();
+      const lin = new Date(tr.lunch_in).getTime();
+      total -= (lin - lout) / 3600000;
+    }
+    return Math.max(0, total);
+  }
+
+  // Get overtime data per employee for selected month
+  function getOvertimeData() {
+    const filtered = timeRecords.filter(tr => {
+      const matchMonth = tr.date.startsWith(horasMonth);
+      const matchEmp = !horasFilterEmployee || tr.employee_id === horasFilterEmployee;
+      return matchMonth && matchEmp;
+    });
+
+    const byEmployee: Record<string, { worked: number; expected: number; records: number }> = {};
+    
+    for (const tr of filtered) {
+      const emp = employees.find(e => e.id === tr.employee_id);
+      if (!emp) continue;
+      if (!byEmployee[tr.employee_id]) {
+        byEmployee[tr.employee_id] = { worked: 0, expected: 0, records: 0 };
+      }
+      byEmployee[tr.employee_id].worked += calcWorkedHours(tr);
+      byEmployee[tr.employee_id].expected += emp.work_hours_per_day;
+      byEmployee[tr.employee_id].records += 1;
+    }
+
+    return Object.entries(byEmployee).map(([empId, data]) => ({
+      employeeId: empId,
+      name: getEmployeeName(empId),
+      employee: employees.find(e => e.id === empId),
+      ...data,
+      overtime: Math.max(0, data.worked - data.expected),
+      deficit: Math.max(0, data.expected - data.worked),
+    }));
+  }
+
+  const tabs = ["cadastro", "ponto", "pagamentos", "horas-extras"] as const;
+  const tabLabels = { cadastro: "👥 Cadastro", ponto: "⏰ Ponto", pagamentos: "💵 Pagamentos", "horas-extras": "🕐 Horas Extras" };
 
   if (loading) return <div className="text-center text-muted-foreground py-12">Carregando...</div>;
 
@@ -180,9 +233,10 @@ export default function FuncionariosView() {
                 <InputField label="Cargo" value={empRole} onChange={setEmpRole} />
                 <InputField label="Salário base (R$)" value={empSalary} onChange={setEmpSalary} placeholder="0,00" />
               </div>
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-3 gap-2.5">
                 <InputField label="Telefone" value={empPhone} onChange={setEmpPhone} placeholder="(00) 00000-0000" />
                 <InputField label="E-mail" value={empEmail} onChange={setEmpEmail} placeholder="email@..." />
+                <InputField label="Jornada (h/dia)" value={empWorkHours} onChange={setEmpWorkHours} placeholder="8" />
               </div>
               <button onClick={addEmployee} className="px-4 py-2 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">
                 + Cadastrar Funcionário
@@ -198,7 +252,7 @@ export default function FuncionariosView() {
                 <div key={e.id} className="flex items-center justify-between px-4 py-3 border-b border-border">
                   <div>
                     <div className="text-[13px] font-medium">{e.name}</div>
-                    <div className="text-[11px] text-muted-foreground">{e.role} · {e.phone || "Sem tel."} · {fmt(e.salary || 0)}/mês</div>
+                    <div className="text-[11px] text-muted-foreground">{e.role} · {e.phone || "Sem tel."} · {fmt(e.salary || 0)}/mês · {e.work_hours_per_day}h/dia</div>
                   </div>
                   <button onClick={() => deleteEmployee(e.id)} className="text-muted-foreground hover:text-destructive text-xs transition-colors">✕</button>
                 </div>
@@ -248,6 +302,7 @@ export default function FuncionariosView() {
                     <div className="text-[11px] text-muted-foreground">
                       {tr.date} · {fmtTime(tr.clock_in)} → {fmtTime(tr.clock_out)}
                       {tr.lunch_out && ` · Almoço: ${fmtTime(tr.lunch_out)}–${fmtTime(tr.lunch_in)}`}
+                      {" · "}<span className="font-semibold">{fmtHours(calcWorkedHours(tr))}</span>
                     </div>
                     {tr.notes && <div className="text-[10px] text-accent mt-0.5">{tr.notes}</div>}
                   </div>
@@ -313,6 +368,105 @@ export default function FuncionariosView() {
           </div>
         </div>
       )}
+
+      {/* HORAS EXTRAS */}
+      {tab === "horas-extras" && (() => {
+        const overtimeData = getOvertimeData();
+        const totalOvertime = overtimeData.reduce((s, d) => s + d.overtime, 0);
+        const totalDeficit = overtimeData.reduce((s, d) => s + d.deficit, 0);
+        const totalWorked = overtimeData.reduce((s, d) => s + d.worked, 0);
+
+        return (
+          <div className="space-y-5">
+            {/* Summary cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="text-2xl font-bold font-mono text-foreground">{fmtHours(totalWorked)}</div>
+                <div className="text-[11px] text-muted-foreground mt-1">Total Trabalhado</div>
+              </div>
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="text-2xl font-bold font-mono text-success">{fmtHours(totalOvertime)}</div>
+                <div className="text-[11px] text-muted-foreground mt-1">Horas Extras</div>
+              </div>
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="text-2xl font-bold font-mono text-warning">{fmtHours(totalDeficit)}</div>
+                <div className="text-[11px] text-muted-foreground mt-1">Horas Devidas</div>
+              </div>
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="text-2xl font-bold font-mono text-primary">{overtimeData.reduce((s, d) => s + d.records, 0)}</div>
+                <div className="text-[11px] text-muted-foreground mt-1">Dias Registrados</div>
+              </div>
+            </div>
+
+            {/* Filters */}
+            <div className="flex gap-3 items-end">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Mês</label>
+                <input type="month" value={horasMonth} onChange={e => setHorasMonth(e.target.value)}
+                  className="bg-secondary border border-border text-foreground px-3 py-2 rounded-md text-[13px] focus:outline-none focus:border-primary" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Funcionário</label>
+                <select value={horasFilterEmployee} onChange={e => setHorasFilterEmployee(e.target.value)}
+                  className="bg-secondary border border-border text-foreground px-3 py-2 rounded-md text-[13px] focus:outline-none focus:border-primary">
+                  <option value="">Todos</option>
+                  {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                </select>
+              </div>
+            </div>
+
+            {/* Per-employee breakdown */}
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="px-4 py-3.5 border-b border-border font-bold text-sm">Resumo por Funcionário — {horasMonth}</div>
+              {overtimeData.length === 0 ? (
+                <div className="p-8 text-center text-muted-foreground text-[13px]">Nenhum registro de ponto neste mês</div>
+              ) : (
+                <div className="divide-y divide-border">
+                  {overtimeData.map(d => {
+                    const valorHora = d.employee && d.employee.salary > 0
+                      ? d.employee.salary / (d.employee.work_hours_per_day * 22)
+                      : 0;
+                    const valorExtra = d.overtime * valorHora * 1.5; // 50% extra
+
+                    return (
+                      <div key={d.employeeId} className="px-4 py-3">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[13px] font-medium">{d.name}</span>
+                          <span className="text-[11px] text-muted-foreground">{d.records} dias</span>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-[12px]">
+                          <div>
+                            <span className="text-muted-foreground">Jornada: </span>
+                            <span className="font-mono font-semibold">{fmtHours(d.expected)}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Trabalhado: </span>
+                            <span className="font-mono font-semibold">{fmtHours(d.worked)}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Extras: </span>
+                            <span className="font-mono font-semibold text-success">{fmtHours(d.overtime)}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Devidas: </span>
+                            <span className="font-mono font-semibold text-warning">{fmtHours(d.deficit)}</span>
+                          </div>
+                          {valorHora > 0 && (
+                            <div>
+                              <span className="text-muted-foreground">Valor HE (1.5x): </span>
+                              <span className="font-mono font-semibold text-success">{fmt(valorExtra)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

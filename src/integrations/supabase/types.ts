@@ -67,6 +67,7 @@ export type Database = {
           salary: number | null
           updated_at: string
           user_id: string
+          work_hours_per_day: number
         }
         Insert: {
           active?: boolean | null
@@ -79,6 +80,7 @@ export type Database = {
           salary?: number | null
           updated_at?: string
           user_id: string
+          work_hours_per_day?: number
         }
         Update: {
           active?: boolean | null
@@ -91,6 +93,7 @@ export type Database = {
           salary?: number | null
           updated_at?: string
           user_id?: string
+          work_hours_per_day?: number
         }
         Relationships: []
       }
