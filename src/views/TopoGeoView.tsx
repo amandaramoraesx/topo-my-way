@@ -1,6 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import type { Vertice } from "@/context/AppContext";
 import { useApp } from "@/context/AppContext";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 function calcArea(pts: Vertice[]) {
   let a = 0;
@@ -23,6 +25,8 @@ function fmtAz(deg: number) {
 
 export default function TopoGeoView() {
   const { apiKey, provider, model } = useApp();
+  const { session } = useAuth();
+  const { toast } = useToast();
   const [vertices, setVertices] = useState<Vertice[]>([]);
   const [tipoServico, setTipoServico] = useState("georref_rural");
   const [activeTab, setActiveTab] = useState("memorial");
@@ -130,6 +134,75 @@ export default function TopoGeoView() {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([content], { type: mime }));
     a.download = name; a.click();
+  };
+
+  const generateMemorial = async () => {
+    if (!session) {
+      toast({ title: "Faça login para gerar o memorial", variant: "destructive" });
+      return;
+    }
+    if (vertices.length < 3) {
+      toast({ title: "Adicione pelo menos 3 vértices", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    setMemorialContent("");
+    setActiveTab("memorial");
+
+    try {
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-memorial`;
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ vertices, formData, tipoServico }),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: "Erro desconhecido" }));
+        throw new Error(err.error || `Erro ${resp.status}`);
+      }
+
+      const reader = resp.body!.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let content = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let idx: number;
+        while ((idx = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, idx);
+          buffer = buffer.slice(idx + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (!line.startsWith("data: ")) continue;
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const delta = parsed.choices?.[0]?.delta?.content;
+            if (delta) {
+              content += delta;
+              setMemorialContent(content);
+            }
+          } catch { /* partial JSON, skip */ }
+        }
+      }
+
+      if (!content) {
+        toast({ title: "Nenhum conteúdo gerado", variant: "destructive" });
+      }
+    } catch (e: any) {
+      console.error("Memorial generation error:", e);
+      toast({ title: e.message || "Erro ao gerar memorial", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const tabs = ["memorial", "planta", "volumes", "exportar"];
@@ -241,8 +314,8 @@ export default function TopoGeoView() {
         </div>
 
         {/* Actions */}
-        <button className="w-full bg-gradient-to-r from-primary to-accent text-background font-mono text-xs px-6 py-3 rounded-lg font-bold tracking-wide hover:opacity-90 hover:-translate-y-px transition-all">
-          ✦ GERAR MEMORIAL COM IA
+        <button onClick={generateMemorial} disabled={loading} className="w-full bg-gradient-to-r from-primary to-accent text-background font-mono text-xs px-6 py-3 rounded-lg font-bold tracking-wide hover:opacity-90 hover:-translate-y-px transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          {loading ? "⏳ GERANDO MEMORIAL..." : "✦ GERAR MEMORIAL COM IA"}
         </button>
         <div className="grid grid-cols-2 gap-2">
           <button className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-secondary text-foreground border border-border hover:border-primary hover:text-primary transition-all">📊 Calcular Volumes</button>
@@ -261,10 +334,31 @@ export default function TopoGeoView() {
         </div>
 
         {activeTab === "memorial" && (
-          <div className="text-center py-16 text-muted-foreground">
-            <div className="text-[40px] mb-3">📄</div>
-            <p>Preencha os dados e clique em<br /><strong className="text-primary">✦ Gerar Memorial com IA</strong></p>
-          </div>
+          memorialContent ? (
+            <div className="bg-card border border-border rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-foreground">Memorial Descritivo</h3>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(memorialContent);
+                    toast({ title: "Memorial copiado!" });
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-secondary text-foreground border border-border hover:border-primary hover:text-primary transition-all"
+                >
+                  📋 Copiar
+                </button>
+              </div>
+              <div className="prose prose-sm max-w-none text-foreground font-mono text-[12px] leading-relaxed whitespace-pre-wrap">
+                {memorialContent}
+              </div>
+              {loading && <div className="mt-3 text-xs text-primary animate-pulse">Gerando...</div>}
+            </div>
+          ) : (
+            <div className="text-center py-16 text-muted-foreground">
+              <div className="text-[40px] mb-3">📄</div>
+              <p>Preencha os dados e clique em<br /><strong className="text-primary">✦ Gerar Memorial com IA</strong></p>
+            </div>
+          )
         )}
 
         {activeTab === "planta" && (
