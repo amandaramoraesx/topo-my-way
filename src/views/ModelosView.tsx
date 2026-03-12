@@ -250,7 +250,7 @@ export default function ModelosView({ categoryFilter }: { categoryFilter?: strin
       {/* Templates list */}
       <div className="overflow-y-auto pr-1">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[15px] font-bold">Modelos Salvos</h3>
+          <h3 className="text-[15px] font-bold">Referências</h3>
           {!categoryFilter && (
             <div className="flex gap-2">
               {[
