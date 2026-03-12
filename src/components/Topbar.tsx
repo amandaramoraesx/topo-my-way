@@ -7,7 +7,7 @@ interface TopbarProps {
 }
 
 export default function Topbar({ onMenuClick }: TopbarProps) {
-  const { currentView, setCurrentView, apiKey, provider } = useApp();
+  const { currentView, setCurrentView } = useApp();
   const meta = viewMeta[currentView];
   const isMobile = useIsMobile();
 
