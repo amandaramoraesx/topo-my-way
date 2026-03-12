@@ -20,6 +20,8 @@ const navItems = [
   { id: "agente-sigef" as const, icon: "🤖", label: "Agente SIGEF", badge: "ATIVO", badgeType: "new" },
   { id: "agente-cart" as const, icon: "🏛️", label: "Agente Cartório", badge: "FASE 2", badgeType: "s2", disabled: true },
   { id: "licenc" as const, icon: "🌿", label: "Licenciamento Amb.", badge: "FASE 3", badgeType: "s3", disabled: true },
+  { section: "Padronização" },
+  { id: "modelos" as const, icon: "📁", label: "Modelos & Templates", badge: "NOVO", badgeType: "new" },
   { section: "Sistema" },
   { id: "config" as const, icon: "⚙️", label: "Configurações" },
 ];
