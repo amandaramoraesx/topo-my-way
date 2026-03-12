@@ -65,7 +65,6 @@ export default function ClientesView() {
     const { data, error } = await supabase
       .from("clients")
       .select("*")
-      .eq("user_id", user.id)
       .order("name");
     if (error) {
       toast.error("Erro ao carregar clientes");
