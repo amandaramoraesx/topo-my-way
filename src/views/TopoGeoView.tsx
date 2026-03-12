@@ -207,7 +207,7 @@ export default function TopoGeoView() {
     }
   };
 
-  const tabs = ["memorial", "planta", "volumes", "exportar"];
+  const tabs = ["memorial", "planta", "referência", "volumes", "exportar"];
 
   return (
     <div className="grid grid-cols-[420px_1fr] gap-5 h-[calc(100vh-116px)] overflow-hidden">
