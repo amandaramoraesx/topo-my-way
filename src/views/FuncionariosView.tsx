@@ -11,6 +11,7 @@ interface Employee {
   email: string;
   salary: number;
   active: boolean;
+  work_hours_per_day: number;
 }
 
 interface TimeRecord {
