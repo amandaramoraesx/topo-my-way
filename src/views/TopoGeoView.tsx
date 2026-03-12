@@ -395,9 +395,6 @@ export default function TopoGeoView() {
           </div>
         )}
 
-        {activeTab === "modelos" && (
-          <ModelosView />
-        )}
       </div>
     </div>
   );
