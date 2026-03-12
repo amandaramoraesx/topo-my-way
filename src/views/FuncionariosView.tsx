@@ -37,7 +37,7 @@ interface Payment {
 export default function FuncionariosView() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [tab, setTab] = useState<"cadastro" | "ponto" | "pagamentos">("cadastro");
+  const [tab, setTab] = useState<"cadastro" | "ponto" | "pagamentos" | "horas-extras">("cadastro");
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [timeRecords, setTimeRecords] = useState<TimeRecord[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
