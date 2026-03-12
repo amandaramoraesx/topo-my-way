@@ -24,6 +24,7 @@ export default function ProjetosView() {
   const update = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
 
   const statusMap: Record<string, string> = { em_andamento: "🔵 Em Andamento", exigencia: "🔴 Exigência", aguardando: "🟡 Aguardando", concluido: "🟢 Concluído" };
+  const statusBadge: Record<string, string> = { em_andamento: "bg-accent/20 text-accent", exigencia: "bg-warning/20 text-warning", aguardando: "bg-gold/20 text-gold", concluido: "bg-success/20 text-success" };
 
   const fetchProjetos = useCallback(async () => {
     const { data, error } = await supabase
