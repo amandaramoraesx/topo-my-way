@@ -94,4 +94,5 @@ export const viewMeta: Record<ViewId, { title: string; sub: string }> = {
   "agente-cart": { title: "Agente Cartório", sub: "Fase 2 — Em construção" },
   licenc: { title: "Licenciamento Ambiental", sub: "Fase 3 — Em breve" },
   modelos: { title: "Modelos & Templates", sub: "Memoriais descritivos e orçamentos padronizados" },
+  funcionarios: { title: "Funcionários", sub: "Cadastro, ponto e pagamentos" },
 };
