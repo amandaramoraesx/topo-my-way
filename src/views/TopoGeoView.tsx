@@ -210,7 +210,7 @@ export default function TopoGeoView() {
   const tabs = ["referência", "memorial", "planta", "volumes", "exportar"];
 
   return (
-    <div className="grid grid-cols-[420px_1fr] gap-5 h-[calc(100vh-116px)] overflow-hidden">
+    <div className="flex flex-col lg:grid lg:grid-cols-[420px_1fr] gap-5 lg:h-[calc(100vh-116px)] lg:overflow-hidden">
       {/* LEFT PANEL */}
       <div className="overflow-y-auto pr-1 space-y-3">
         {/* Tipo de Serviço */}
@@ -327,9 +327,9 @@ export default function TopoGeoView() {
 
       {/* RIGHT PANEL */}
       <div className="overflow-y-auto pr-1">
-        <div className="flex border-b border-border mb-5">
+        <div className="flex overflow-x-auto border-b border-border mb-5 -mx-1 px-1">
           {tabs.map(t => (
-            <button key={t} onClick={() => setActiveTab(t)} className={`px-4 py-2.5 text-[13px] font-medium border-b-2 transition-all ${activeTab === t ? "text-primary border-primary font-bold" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
+            <button key={t} onClick={() => setActiveTab(t)} className={`px-3 md:px-4 py-2.5 text-[12px] md:text-[13px] font-medium border-b-2 transition-all whitespace-nowrap ${activeTab === t ? "text-primary border-primary font-bold" : "text-muted-foreground border-transparent hover:text-foreground"}`}>
               {t.charAt(0).toUpperCase() + t.slice(1)}
             </button>
           ))}
@@ -373,7 +373,7 @@ export default function TopoGeoView() {
         )}
 
         {activeTab === "exportar" && (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               { icon: "🗂️", name: "DXF — AutoCAD", desc: "3 layers: PERIMETRO, VERTICES, TEXTOS", onClick: exportDXF },
               { icon: "📊", name: "CSV — Coordenadas", desc: "Planilha com todos os vértices UTM", onClick: exportCSV },
