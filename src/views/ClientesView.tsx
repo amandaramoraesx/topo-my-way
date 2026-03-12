@@ -13,11 +13,15 @@ interface Client {
   id: string;
   name: string;
   address: string | null;
+  neighborhood: string | null;
   property_name: string | null;
   service_type: string | null;
+  referral_source: string | null;
   notes: string | null;
   created_at: string;
 }
+
+const referralOptions = ["Indicação", "Rádio", "Instagram", "Google", "Outro"];
 
 interface ClientFile {
   name: string;
@@ -46,6 +50,8 @@ export default function ClientesView() {
   const [address, setAddress] = useState("");
   const [propertyName, setPropertyName] = useState("");
   const [serviceType, setServiceType] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
+  const [referralSource, setReferralSource] = useState("");
   const [notes, setNotes] = useState("");
 
   // Files state
@@ -76,8 +82,10 @@ export default function ClientesView() {
   const resetForm = () => {
     setName("");
     setAddress("");
+    setNeighborhood("");
     setPropertyName("");
     setServiceType("");
+    setReferralSource("");
     setNotes("");
     setEditingClient(null);
     setShowForm(false);
@@ -93,8 +101,10 @@ export default function ClientesView() {
       user_id: user.id,
       name: name.trim(),
       address: address.trim() || null,
+      neighborhood: neighborhood.trim() || null,
       property_name: propertyName.trim() || null,
       service_type: serviceType.trim() || null,
+      referral_source: referralSource || null,
       notes: notes.trim() || null,
     };
 
@@ -125,8 +135,10 @@ export default function ClientesView() {
     setEditingClient(client);
     setName(client.name);
     setAddress(client.address || "");
+    setNeighborhood(client.neighborhood || "");
     setPropertyName(client.property_name || "");
     setServiceType(client.service_type || "");
+    setReferralSource(client.referral_source || "");
     setNotes(client.notes || "");
     setShowForm(true);
   };
@@ -247,12 +259,20 @@ export default function ClientesView() {
               <span className="text-foreground">{selectedClient.address || "—"}</span>
             </div>
             <div>
+              <span className="text-muted-foreground">Vila/Bairro:</span>{" "}
+              <span className="text-foreground">{selectedClient.neighborhood || "—"}</span>
+            </div>
+            <div>
               <span className="text-muted-foreground">Propriedade:</span>{" "}
               <span className="text-foreground">{selectedClient.property_name || "—"}</span>
             </div>
             <div>
               <span className="text-muted-foreground">Serviço:</span>{" "}
               <span className="text-foreground">{selectedClient.service_type || "—"}</span>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Veio de:</span>{" "}
+              <span className="text-foreground">{selectedClient.referral_source || "—"}</span>
             </div>
             <div>
               <span className="text-muted-foreground">Obs:</span>{" "}
@@ -367,12 +387,29 @@ export default function ClientesView() {
                 <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Endereço completo" />
               </div>
               <div className="space-y-1.5">
+                <Label className="text-xs">Vila / Bairro</Label>
+                <Input value={neighborhood} onChange={(e) => setNeighborhood(e.target.value)} placeholder="Ex: Vila Rio Branco" />
+              </div>
+              <div className="space-y-1.5">
                 <Label className="text-xs">Nome da Propriedade</Label>
                 <Input value={propertyName} onChange={(e) => setPropertyName(e.target.value)} placeholder="Ex: Fazenda Boa Vista" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Tipo de Serviço</Label>
                 <Input value={serviceType} onChange={(e) => setServiceType(e.target.value)} placeholder="Ex: Georreferenciamento" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Veio de</Label>
+                <select
+                  value={referralSource}
+                  onChange={(e) => setReferralSource(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">Selecione...</option>
+                  {referralOptions.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
               </div>
             </div>
             <div className="space-y-1.5">
