@@ -235,25 +235,27 @@ export default function ModelosView({ categoryFilter }: { categoryFilter?: strin
       <div className="overflow-y-auto pr-1">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[15px] font-bold">Modelos Salvos</h3>
-          <div className="flex gap-2">
-            {[
-              { value: "all", label: "Todos" },
-              { value: "memorial", label: "📐 Memoriais" },
-              { value: "orcamento", label: "📋 Orçamentos" },
-            ].map((f) => (
-              <button
-                key={f.value}
-                onClick={() => setFilter(f.value)}
-                className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${
-                  filter === f.value
-                    ? "bg-primary/10 text-primary border border-primary/20"
-                    : "text-muted-foreground hover:bg-secondary border border-transparent"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
+          {!categoryFilter && (
+            <div className="flex gap-2">
+              {[
+                { value: "all", label: "Todos" },
+                { value: "memorial", label: "📐 Memoriais" },
+                { value: "orcamento", label: "📋 Orçamentos" },
+              ].map((f) => (
+                <button
+                  key={f.value}
+                  onClick={() => setFilter(f.value)}
+                  className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${
+                    filter === f.value
+                      ? "bg-primary/10 text-primary border border-primary/20"
+                      : "text-muted-foreground hover:bg-secondary border border-transparent"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {loading ? (
