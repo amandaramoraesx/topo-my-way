@@ -82,8 +82,10 @@ export default function ClientesView() {
   const resetForm = () => {
     setName("");
     setAddress("");
+    setNeighborhood("");
     setPropertyName("");
     setServiceType("");
+    setReferralSource("");
     setNotes("");
     setEditingClient(null);
     setShowForm(false);
