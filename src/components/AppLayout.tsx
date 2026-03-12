@@ -3,6 +3,7 @@ import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
 import { useApp } from "@/context/AppContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUserRole } from "@/hooks/useUserRole";
 import DashboardView from "@/views/DashboardView";
 import TopoGeoView from "@/views/TopoGeoView";
 import ExigenciaView from "@/views/ExigenciaView";
@@ -13,6 +14,7 @@ import ProjetosView from "@/views/ProjetosView";
 import InstagramView from "@/views/InstagramView";
 import ConfigView from "@/views/ConfigView";
 import AgenteSigefView from "@/views/AgenteSigefView";
+import FuncionariosView from "@/views/FuncionariosView";
 import PlaceholderView from "@/views/PlaceholderView";
 
 const viewComponents: Record<string, React.ComponentType> = {
@@ -26,6 +28,7 @@ const viewComponents: Record<string, React.ComponentType> = {
   instagram: InstagramView,
   config: ConfigView,
   "agente-sigef": AgenteSigefView,
+  funcionarios: FuncionariosView,
 };
 
 export default function AppLayout() {
