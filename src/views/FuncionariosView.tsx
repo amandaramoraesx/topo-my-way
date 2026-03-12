@@ -93,7 +93,7 @@ export default function FuncionariosView() {
     });
     if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
     toast({ title: "✅ Funcionário cadastrado!" });
-    setEmpName(""); setEmpPhone(""); setEmpEmail(""); setEmpSalary("");
+    setEmpName(""); setEmpPhone(""); setEmpEmail(""); setEmpSalary(""); setEmpWorkHours("8");
     loadData();
   }
 
