@@ -49,6 +49,7 @@ export default function FuncionariosView() {
   const [empPhone, setEmpPhone] = useState("");
   const [empEmail, setEmpEmail] = useState("");
   const [empSalary, setEmpSalary] = useState("");
+  const [empWorkHours, setEmpWorkHours] = useState("8");
 
   const [selEmployee, setSelEmployee] = useState("");
   const [pontoDate, setPontoDate] = useState(new Date().toISOString().slice(0, 10));
