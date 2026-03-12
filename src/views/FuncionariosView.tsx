@@ -369,6 +369,105 @@ export default function FuncionariosView() {
           </div>
         </div>
       )}
+
+      {/* HORAS EXTRAS */}
+      {tab === "horas-extras" && (() => {
+        const overtimeData = getOvertimeData();
+        const totalOvertime = overtimeData.reduce((s, d) => s + d.overtime, 0);
+        const totalDeficit = overtimeData.reduce((s, d) => s + d.deficit, 0);
+        const totalWorked = overtimeData.reduce((s, d) => s + d.worked, 0);
+
+        return (
+          <div className="space-y-5">
+            {/* Summary cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="text-2xl font-bold font-mono text-foreground">{fmtHours(totalWorked)}</div>
+                <div className="text-[11px] text-muted-foreground mt-1">Total Trabalhado</div>
+              </div>
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="text-2xl font-bold font-mono text-success">{fmtHours(totalOvertime)}</div>
+                <div className="text-[11px] text-muted-foreground mt-1">Horas Extras</div>
+              </div>
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="text-2xl font-bold font-mono text-warning">{fmtHours(totalDeficit)}</div>
+                <div className="text-[11px] text-muted-foreground mt-1">Horas Devidas</div>
+              </div>
+              <div className="bg-card border border-border rounded-xl p-4">
+                <div className="text-2xl font-bold font-mono text-primary">{overtimeData.reduce((s, d) => s + d.records, 0)}</div>
+                <div className="text-[11px] text-muted-foreground mt-1">Dias Registrados</div>
+              </div>
+            </div>
+
+            {/* Filters */}
+            <div className="flex gap-3 items-end">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Mês</label>
+                <input type="month" value={horasMonth} onChange={e => setHorasMonth(e.target.value)}
+                  className="bg-secondary border border-border text-foreground px-3 py-2 rounded-md text-[13px] focus:outline-none focus:border-primary" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Funcionário</label>
+                <select value={horasFilterEmployee} onChange={e => setHorasFilterEmployee(e.target.value)}
+                  className="bg-secondary border border-border text-foreground px-3 py-2 rounded-md text-[13px] focus:outline-none focus:border-primary">
+                  <option value="">Todos</option>
+                  {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+                </select>
+              </div>
+            </div>
+
+            {/* Per-employee breakdown */}
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="px-4 py-3.5 border-b border-border font-bold text-sm">Resumo por Funcionário — {horasMonth}</div>
+              {overtimeData.length === 0 ? (
+                <div className="p-8 text-center text-muted-foreground text-[13px]">Nenhum registro de ponto neste mês</div>
+              ) : (
+                <div className="divide-y divide-border">
+                  {overtimeData.map(d => {
+                    const valorHora = d.employee && d.employee.salary > 0
+                      ? d.employee.salary / (d.employee.work_hours_per_day * 22)
+                      : 0;
+                    const valorExtra = d.overtime * valorHora * 1.5; // 50% extra
+
+                    return (
+                      <div key={d.employeeId} className="px-4 py-3">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-[13px] font-medium">{d.name}</span>
+                          <span className="text-[11px] text-muted-foreground">{d.records} dias</span>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-[12px]">
+                          <div>
+                            <span className="text-muted-foreground">Jornada: </span>
+                            <span className="font-mono font-semibold">{fmtHours(d.expected)}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Trabalhado: </span>
+                            <span className="font-mono font-semibold">{fmtHours(d.worked)}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Extras: </span>
+                            <span className="font-mono font-semibold text-success">{fmtHours(d.overtime)}</span>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Devidas: </span>
+                            <span className="font-mono font-semibold text-warning">{fmtHours(d.deficit)}</span>
+                          </div>
+                          {valorHora > 0 && (
+                            <div>
+                              <span className="text-muted-foreground">Valor HE (1.5x): </span>
+                              <span className="font-mono font-semibold text-success">{fmt(valorExtra)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
