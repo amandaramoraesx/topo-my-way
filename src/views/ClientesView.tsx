@@ -259,12 +259,20 @@ export default function ClientesView() {
               <span className="text-foreground">{selectedClient.address || "—"}</span>
             </div>
             <div>
+              <span className="text-muted-foreground">Vila/Bairro:</span>{" "}
+              <span className="text-foreground">{selectedClient.neighborhood || "—"}</span>
+            </div>
+            <div>
               <span className="text-muted-foreground">Propriedade:</span>{" "}
               <span className="text-foreground">{selectedClient.property_name || "—"}</span>
             </div>
             <div>
               <span className="text-muted-foreground">Serviço:</span>{" "}
               <span className="text-foreground">{selectedClient.service_type || "—"}</span>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Veio de:</span>{" "}
+              <span className="text-foreground">{selectedClient.referral_source || "—"}</span>
             </div>
             <div>
               <span className="text-muted-foreground">Obs:</span>{" "}
