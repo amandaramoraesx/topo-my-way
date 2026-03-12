@@ -48,7 +48,7 @@ export default function DashboardView() {
   const stats = [
     { value: ativos, label: "Ativos", icon: "📁", color: "text-accent" },
     { value: exig, label: "Exigências", icon: "⚠️", color: "text-warning" },
-    { value: `R$${rec.toLocaleString("pt-BR", { minimumFractionDigits: 0 })}`, label: "Receita", icon: "💰", color: "text-success" },
+    ...(isAdminOrGerente ? [{ value: `R$${rec.toLocaleString("pt-BR", { minimumFractionDigits: 0 })}`, label: "Receita", icon: "💰", color: "text-success" }] : []),
   ];
 
   const tools = [
