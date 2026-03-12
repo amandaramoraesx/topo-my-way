@@ -13,6 +13,7 @@ interface DashProjeto {
 
 export default function DashboardView() {
   const { setCurrentView } = useApp();
+  const { isAdminOrGerente } = useUserRole();
   const [projetos, setProjetos] = useState<DashProjeto[]>([]);
   const [rec, setRec] = useState(0);
 
