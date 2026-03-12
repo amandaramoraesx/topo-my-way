@@ -314,8 +314,8 @@ export default function TopoGeoView() {
         </div>
 
         {/* Actions */}
-        <button className="w-full bg-gradient-to-r from-primary to-accent text-background font-mono text-xs px-6 py-3 rounded-lg font-bold tracking-wide hover:opacity-90 hover:-translate-y-px transition-all">
-          ✦ GERAR MEMORIAL COM IA
+        <button onClick={generateMemorial} disabled={loading} className="w-full bg-gradient-to-r from-primary to-accent text-background font-mono text-xs px-6 py-3 rounded-lg font-bold tracking-wide hover:opacity-90 hover:-translate-y-px transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          {loading ? "⏳ GERANDO MEMORIAL..." : "✦ GERAR MEMORIAL COM IA"}
         </button>
         <div className="grid grid-cols-2 gap-2">
           <button className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-secondary text-foreground border border-border hover:border-primary hover:text-primary transition-all">📊 Calcular Volumes</button>
