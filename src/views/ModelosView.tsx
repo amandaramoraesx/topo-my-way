@@ -309,7 +309,7 @@ export default function ModelosView({ categoryFilter }: { categoryFilter?: strin
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-foreground truncate">{t.name}</span>
                     <Badge variant="secondary" className="text-[10px] shrink-0">
-                      {t.category === "memorial" ? "📐 Memorial" : "📋 Orçamento"}
+                      {t.category === "memorial" ? "📐 Memorial" : t.category === "laudo" ? "📋 Laudo" : "📋 Orçamento"}
                     </Badge>
                     {t.sub_type && (
                       <Badge variant="outline" className="text-[10px] shrink-0">{t.sub_type}</Badge>
