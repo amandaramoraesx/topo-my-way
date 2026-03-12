@@ -1,7 +1,9 @@
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, lazy, Suspense } from "react";
 import type { Vertice } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+
+const ModelosView = lazy(() => import("@/views/ModelosView"));
 
 
 function calcArea(pts: Vertice[]) {
@@ -205,7 +207,7 @@ export default function TopoGeoView() {
     }
   };
 
-  const tabs = ["memorial", "planta", "volumes", "exportar"];
+  const tabs = ["memorial", "planta", "referência", "volumes", "exportar"];
 
   return (
     <div className="grid grid-cols-[420px_1fr] gap-5 h-[calc(100vh-116px)] overflow-hidden">
@@ -387,6 +389,12 @@ export default function TopoGeoView() {
               </div>
             ))}
           </div>
+        )}
+
+        {activeTab === "referência" && (
+          <Suspense fallback={<div className="text-center py-16 text-muted-foreground text-[13px]">Carregando...</div>}>
+            <ModelosView categoryFilter="memorial" />
+          </Suspense>
         )}
 
         {activeTab === "volumes" && (
