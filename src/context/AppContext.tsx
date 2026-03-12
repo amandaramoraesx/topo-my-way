@@ -8,12 +8,6 @@ type ViewId =
 interface AppContextType {
   currentView: ViewId;
   setCurrentView: (view: ViewId) => void;
-  apiKey: string;
-  setApiKey: (key: string) => void;
-  provider: "anthropic" | "gemini";
-  setProvider: (p: "anthropic" | "gemini") => void;
-  model: string;
-  setModel: (m: string) => void;
   empresa: EmpresaData;
   setEmpresa: (e: EmpresaData) => void;
   projetos: Projeto[];
@@ -64,9 +58,6 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [currentView, setCurrentView] = useState<ViewId>("home");
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem("rt_api_key") || "");
-  const [provider, setProvider] = useState<"anthropic" | "gemini">(() => (localStorage.getItem("rt_provider") as any) || "anthropic");
-  const [model, setModel] = useState(() => localStorage.getItem("rt_model") || "claude-sonnet-4-6");
   const [empresa, setEmpresa] = useState<EmpresaData>(() => JSON.parse(localStorage.getItem("rt_empresa") || '{"nome":"Rodrigues Topografia","rt":"","crea":"","tel":"","email":"","cidade":""}'));
   const [projetos, setProjetos] = useState<Projeto[]>(() => JSON.parse(localStorage.getItem("rt_projetos") || "[]"));
   const [financas, setFinancas] = useState<Financa[]>(() => JSON.parse(localStorage.getItem("rt_financas") || "[]"));
@@ -74,9 +65,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   return (
     <AppContext.Provider value={{
       currentView, setCurrentView,
-      apiKey, setApiKey,
-      provider, setProvider,
-      model, setModel,
       empresa, setEmpresa,
       projetos, setProjetos,
       financas, setFinancas,

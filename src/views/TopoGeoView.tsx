@@ -1,6 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import type { Vertice } from "@/context/AppContext";
-import { useApp } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import ModelosView from "@/views/ModelosView";
@@ -25,7 +24,7 @@ function fmtAz(deg: number) {
 }
 
 export default function TopoGeoView() {
-  const { apiKey, provider, model } = useApp();
+  
   const { session } = useAuth();
   const { toast } = useToast();
   const [vertices, setVertices] = useState<Vertice[]>([]);
