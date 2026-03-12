@@ -3,6 +3,7 @@ import type { Vertice } from "@/context/AppContext";
 import { useApp } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import ModelosView from "@/views/ModelosView";
 
 function calcArea(pts: Vertice[]) {
   let a = 0;
@@ -205,7 +206,7 @@ export default function TopoGeoView() {
     }
   };
 
-  const tabs = ["memorial", "planta", "volumes", "exportar"];
+  const tabs = ["memorial", "planta", "volumes", "exportar", "modelos"];
 
   return (
     <div className="grid grid-cols-[420px_1fr] gap-5 h-[calc(100vh-116px)] overflow-hidden">
@@ -393,6 +394,10 @@ export default function TopoGeoView() {
           <div className="text-center py-16 text-muted-foreground text-[13px]">
             Configure os parâmetros e clique em Calcular.
           </div>
+        )}
+
+        {activeTab === "modelos" && (
+          <ModelosView />
         )}
       </div>
     </div>
