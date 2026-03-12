@@ -25,6 +25,8 @@ function fmtAz(deg: number) {
 
 export default function TopoGeoView() {
   const { apiKey, provider, model } = useApp();
+  const { session } = useAuth();
+  const { toast } = useToast();
   const [vertices, setVertices] = useState<Vertice[]>([]);
   const [tipoServico, setTipoServico] = useState("georref_rural");
   const [activeTab, setActiveTab] = useState("memorial");
