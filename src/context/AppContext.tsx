@@ -3,7 +3,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 type ViewId = 
   | "home" | "topogeo" | "exigencia" | "orcamento" | "laudos" 
   | "financeiro" | "projetos" | "instagram" | "config" 
-  | "agente-sigef" | "agente-cart" | "licenc" | "modelos" | "funcionarios";
+  | "agente-sigef" | "agente-cart" | "licenc" | "modelos" | "funcionarios" | "clientes";
 
 interface AppContextType {
   currentView: ViewId;
