@@ -64,7 +64,8 @@ export default function FuncionariosView() {
   const [payDate, setPayDate] = useState(new Date().toISOString().slice(0, 10));
   const [payDesc, setPayDesc] = useState("");
   const [payType, setPayType] = useState("salario");
-
+  const [horasFilterEmployee, setHorasFilterEmployee] = useState("");
+  const [horasMonth, setHorasMonth] = useState(new Date().toISOString().slice(0, 7));
   useEffect(() => { loadData(); }, []);
 
   async function loadData() {
