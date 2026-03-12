@@ -8,12 +8,6 @@ type ViewId =
 interface AppContextType {
   currentView: ViewId;
   setCurrentView: (view: ViewId) => void;
-  apiKey: string;
-  setApiKey: (key: string) => void;
-  provider: "anthropic" | "gemini";
-  setProvider: (p: "anthropic" | "gemini") => void;
-  model: string;
-  setModel: (m: string) => void;
   empresa: EmpresaData;
   setEmpresa: (e: EmpresaData) => void;
   projetos: Projeto[];
