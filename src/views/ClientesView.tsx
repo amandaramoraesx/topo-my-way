@@ -101,8 +101,10 @@ export default function ClientesView() {
       user_id: user.id,
       name: name.trim(),
       address: address.trim() || null,
+      neighborhood: neighborhood.trim() || null,
       property_name: propertyName.trim() || null,
       service_type: serviceType.trim() || null,
+      referral_source: referralSource || null,
       notes: notes.trim() || null,
     };
 
