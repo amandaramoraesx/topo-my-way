@@ -15,6 +15,7 @@ import InstagramView from "@/views/InstagramView";
 import ConfigView from "@/views/ConfigView";
 import AgenteSigefView from "@/views/AgenteSigefView";
 import FuncionariosView from "@/views/FuncionariosView";
+import ClientesView from "@/views/ClientesView";
 import PlaceholderView from "@/views/PlaceholderView";
 
 const viewComponents: Record<string, React.ComponentType> = {
@@ -29,6 +30,7 @@ const viewComponents: Record<string, React.ComponentType> = {
   config: ConfigView,
   "agente-sigef": AgenteSigefView,
   funcionarios: FuncionariosView,
+  clientes: ClientesView,
 };
 
 const restrictedViews = ["financeiro", "funcionarios"];

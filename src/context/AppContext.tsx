@@ -3,7 +3,7 @@ import { createContext, useContext, useState, ReactNode } from "react";
 type ViewId = 
   | "home" | "topogeo" | "exigencia" | "orcamento" | "laudos" 
   | "financeiro" | "projetos" | "instagram" | "config" 
-  | "agente-sigef" | "agente-cart" | "licenc" | "modelos" | "funcionarios";
+  | "agente-sigef" | "agente-cart" | "licenc" | "modelos" | "funcionarios" | "clientes";
 
 interface AppContextType {
   currentView: ViewId;
@@ -95,4 +95,5 @@ export const viewMeta: Record<ViewId, { title: string; sub: string }> = {
   licenc: { title: "Licenciamento Ambiental", sub: "Fase 3 — Em breve" },
   modelos: { title: "Modelos & Templates", sub: "Memoriais descritivos e orçamentos padronizados" },
   funcionarios: { title: "Funcionários", sub: "Cadastro, ponto e pagamentos" },
+  clientes: { title: "Clientes", sub: "Cadastro de clientes e arquivos" },
 };

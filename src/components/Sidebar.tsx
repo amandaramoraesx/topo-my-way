@@ -8,6 +8,7 @@ const navItems = [
   { id: "home" as const, icon: "🏠", label: "Dashboard" },
   { section: "Ferramentas" },
   { id: "projetos" as const, icon: "📁", label: "Projetos", badge: "NOVO", badgeType: "new" },
+  { id: "clientes" as const, icon: "👥", label: "Clientes", badge: "NOVO", badgeType: "new" },
   { id: "topogeo" as const, icon: "📐", label: "TopoGEO v2", badge: "PRONTO", badgeType: "ok" },
   { id: "exigencia" as const, icon: "⚖️", label: "Exigência Zero", badge: "PRONTO", badgeType: "ok" },
   { id: "orcamento" as const, icon: "📋", label: "Orçamentos", badge: "NOVO", badgeType: "new" },
