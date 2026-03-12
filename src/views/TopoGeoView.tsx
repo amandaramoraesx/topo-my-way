@@ -1,6 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import type { Vertice } from "@/context/AppContext";
 import { useApp } from "@/context/AppContext";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 function calcArea(pts: Vertice[]) {
   let a = 0;
