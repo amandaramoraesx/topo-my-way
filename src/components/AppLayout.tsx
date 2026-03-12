@@ -13,7 +13,6 @@ import ProjetosView from "@/views/ProjetosView";
 import InstagramView from "@/views/InstagramView";
 import ConfigView from "@/views/ConfigView";
 import AgenteSigefView from "@/views/AgenteSigefView";
-import ModelosView from "@/views/ModelosView";
 import PlaceholderView from "@/views/PlaceholderView";
 
 const viewComponents: Record<string, React.ComponentType> = {
