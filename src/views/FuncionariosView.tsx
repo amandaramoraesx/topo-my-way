@@ -252,7 +252,7 @@ export default function FuncionariosView() {
                 <div key={e.id} className="flex items-center justify-between px-4 py-3 border-b border-border">
                   <div>
                     <div className="text-[13px] font-medium">{e.name}</div>
-                    <div className="text-[11px] text-muted-foreground">{e.role} · {e.phone || "Sem tel."} · {fmt(e.salary || 0)}/mês</div>
+                    <div className="text-[11px] text-muted-foreground">{e.role} · {e.phone || "Sem tel."} · {fmt(e.salary || 0)}/mês · {e.work_hours_per_day}h/dia</div>
                   </div>
                   <button onClick={() => deleteEmployee(e.id)} className="text-muted-foreground hover:text-destructive text-xs transition-colors">✕</button>
                 </div>
