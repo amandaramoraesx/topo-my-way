@@ -105,4 +105,5 @@ export const viewMeta: Record<ViewId, { title: string; sub: string }> = {
   "agente-sigef": { title: "Agente SIGEF", sub: "Gestão de processos INCRA/SIGEF" },
   "agente-cart": { title: "Agente Cartório", sub: "Fase 2 — Em construção" },
   licenc: { title: "Licenciamento Ambiental", sub: "Fase 3 — Em breve" },
+  modelos: { title: "Modelos & Templates", sub: "Memoriais descritivos e orçamentos padronizados" },
 };

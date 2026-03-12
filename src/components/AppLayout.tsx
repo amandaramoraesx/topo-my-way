@@ -27,6 +27,7 @@ const viewComponents: Record<string, React.ComponentType> = {
   instagram: InstagramView,
   config: ConfigView,
   "agente-sigef": AgenteSigefView,
+  modelos: ModelosView,
 };
 
 export default function AppLayout() {
