@@ -95,4 +95,5 @@ export const viewMeta: Record<ViewId, { title: string; sub: string }> = {
   licenc: { title: "Licenciamento Ambiental", sub: "Fase 3 — Em breve" },
   modelos: { title: "Modelos & Templates", sub: "Memoriais descritivos e orçamentos padronizados" },
   funcionarios: { title: "Funcionários", sub: "Cadastro, ponto e pagamentos" },
+  clientes: { title: "Clientes", sub: "Cadastro de clientes e arquivos" },
 };

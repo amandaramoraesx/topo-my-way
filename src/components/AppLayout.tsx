@@ -30,6 +30,7 @@ const viewComponents: Record<string, React.ComponentType> = {
   config: ConfigView,
   "agente-sigef": AgenteSigefView,
   funcionarios: FuncionariosView,
+  clientes: ClientesView,
 };
 
 const restrictedViews = ["financeiro", "funcionarios"];
