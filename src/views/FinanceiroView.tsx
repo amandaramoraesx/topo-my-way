@@ -84,21 +84,23 @@ export default function FinanceiroView() {
 
   return (
     <div>
-      <div className="grid grid-cols-4 gap-4 mb-5">
+      {/* Cards de resumo */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5">
         {[
           { v: fmt(rec), l: "Recebido no Mês", c: "text-success" },
           { v: fmt(arec), l: "A Receber", c: "text-gold" },
           { v: fmt(desp), l: "Despesas do Mês", c: "text-warning" },
           { v: margem, l: "Margem Líquida", c: "text-primary" },
         ].map((s, i) => (
-          <div key={i} className="bg-card border border-border rounded-xl p-5">
-            <div className={`text-3xl font-bold font-mono ${s.c}`}>{s.v}</div>
-            <div className="text-xs text-muted-foreground mt-1">{s.l}</div>
+          <div key={i} className="bg-card border border-border rounded-xl p-3 md:p-5">
+            <div className={`text-lg md:text-3xl font-bold font-mono ${s.c} truncate`}>{s.v}</div>
+            <div className="text-[10px] md:text-xs text-muted-foreground mt-1">{s.l}</div>
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-2 gap-5">
-        <div className="bg-card border border-border rounded-xl p-5">
+      {/* Formulário + Lançamentos */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="bg-card border border-border rounded-xl p-4 md:p-5">
           <h3 className="mb-3.5 text-sm font-bold">+ Novo Lançamento</h3>
           <div className="space-y-2.5">
             <div className="grid grid-cols-2 gap-2.5">
@@ -131,7 +133,7 @@ export default function FinanceiroView() {
                 </select>
               </div>
             </div>
-            <button onClick={adicionar} className="px-4 py-2 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">+ Adicionar Lançamento</button>
+            <button onClick={adicionar} className="w-full px-4 py-2.5 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">+ Adicionar Lançamento</button>
           </div>
         </div>
         <div className="bg-card border border-border rounded-xl overflow-hidden">
@@ -149,13 +151,13 @@ export default function FinanceiroView() {
               <div className="p-8 text-center text-muted-foreground text-[13px]">Nenhum lançamento ainda</div>
             ) : (
               itens.map(f => (
-                <div key={f.id} className="flex items-center justify-between px-3.5 py-2.5 border-b border-border">
-                  <div>
-                    <div className="text-[13px]">{f.descricao}</div>
-                    <div className="text-[11px] text-muted-foreground">{f.categoria} · {f.data}</div>
+                <div key={f.id} className="flex items-center justify-between px-3 md:px-3.5 py-2.5 border-b border-border gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[13px] truncate">{f.descricao}</div>
+                    <div className="text-[11px] text-muted-foreground truncate">{f.categoria} · {f.data}</div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`font-mono text-[13px] font-bold ${f.tipo === "receita" ? "text-success" : f.tipo === "despesa" ? "text-warning" : ""}`}>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`font-mono text-[12px] md:text-[13px] font-bold whitespace-nowrap ${f.tipo === "receita" ? "text-success" : f.tipo === "despesa" ? "text-warning" : ""}`}>
                       {f.tipo === "despesa" ? "-" : "+"}R${f.valor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                     </span>
                     <button onClick={() => del(f.id)} className="text-muted-foreground hover:text-warning transition-colors">✕</button>
