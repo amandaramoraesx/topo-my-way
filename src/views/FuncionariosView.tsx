@@ -233,9 +233,10 @@ export default function FuncionariosView() {
                 <InputField label="Cargo" value={empRole} onChange={setEmpRole} />
                 <InputField label="Salário base (R$)" value={empSalary} onChange={setEmpSalary} placeholder="0,00" />
               </div>
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-3 gap-2.5">
                 <InputField label="Telefone" value={empPhone} onChange={setEmpPhone} placeholder="(00) 00000-0000" />
                 <InputField label="E-mail" value={empEmail} onChange={setEmpEmail} placeholder="email@..." />
+                <InputField label="Jornada (h/dia)" value={empWorkHours} onChange={setEmpWorkHours} placeholder="8" />
               </div>
               <button onClick={addEmployee} className="px-4 py-2 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">
                 + Cadastrar Funcionário
