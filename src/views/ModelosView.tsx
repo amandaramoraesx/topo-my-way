@@ -43,7 +43,7 @@ export default function ModelosView({ categoryFilter }: { categoryFilter?: strin
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [filter, setFilter] = useState<string>("all");
+  const [filter, setFilter] = useState<string>(categoryFilter || "all");
 
   // Form state
   const [name, setName] = useState("");
