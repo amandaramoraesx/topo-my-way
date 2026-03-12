@@ -395,6 +395,10 @@ export default function TopoGeoView() {
             Configure os parâmetros e clique em Calcular.
           </div>
         )}
+
+        {activeTab === "modelos" && (
+          <ModelosView />
+        )}
       </div>
     </div>
   );
