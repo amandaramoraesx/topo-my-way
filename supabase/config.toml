@@ -1,1 +1,4 @@
 project_id = "uxczoofklemawphwofuk"
+
+[functions.generate-memorial]
+verify_jwt = false
