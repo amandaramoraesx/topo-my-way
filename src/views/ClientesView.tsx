@@ -13,11 +13,15 @@ interface Client {
   id: string;
   name: string;
   address: string | null;
+  neighborhood: string | null;
   property_name: string | null;
   service_type: string | null;
+  referral_source: string | null;
   notes: string | null;
   created_at: string;
 }
+
+const referralOptions = ["Indicação", "Rádio", "Instagram", "Google", "Outro"];
 
 interface ClientFile {
   name: string;
