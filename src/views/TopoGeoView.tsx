@@ -391,6 +391,12 @@ export default function TopoGeoView() {
           </div>
         )}
 
+        {activeTab === "referência" && (
+          <Suspense fallback={<div className="text-center py-16 text-muted-foreground text-[13px]">Carregando...</div>}>
+            <ModelosView categoryFilter="memorial" />
+          </Suspense>
+        )}
+
         {activeTab === "volumes" && (
           <div className="text-center py-16 text-muted-foreground text-[13px]">
             Configure os parâmetros e clique em Calcular.
