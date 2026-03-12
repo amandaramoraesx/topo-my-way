@@ -304,7 +304,6 @@ export default function FuncionariosView() {
                       {tr.lunch_out && ` · Almoço: ${fmtTime(tr.lunch_out)}–${fmtTime(tr.lunch_in)}`}
                       {" · "}<span className="font-semibold">{fmtHours(calcWorkedHours(tr))}</span>
                     </div>
-                    </div>
                     {tr.notes && <div className="text-[10px] text-accent mt-0.5">{tr.notes}</div>}
                   </div>
                   <button onClick={() => deleteTimeRecord(tr.id)} className="text-muted-foreground hover:text-destructive text-xs transition-colors">✕</button>
