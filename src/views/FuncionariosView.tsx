@@ -81,6 +81,20 @@ export default function FuncionariosView() {
     setLoading(false);
   }
 
+  function parseLocalizedNumber(value: string): number {
+    if (!value || value.trim() === "") return 0;
+    let str = value.trim().replace(/[R$\s]/g, "");
+    const lastComma = str.lastIndexOf(",");
+    const lastDot = str.lastIndexOf(".");
+    if (lastComma > lastDot) {
+      str = str.replace(/\./g, "").replace(",", ".");
+    } else {
+      str = str.replace(/,/g, "");
+    }
+    const parsed = parseFloat(str);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+
   async function addEmployee() {
     if (!empName || !user) return;
     const { error } = await supabase.from("employees").insert({
@@ -89,7 +103,8 @@ export default function FuncionariosView() {
       role: empRole,
       phone: empPhone,
       email: empEmail,
-      salary: parseFloat(empSalary) || 0,
+      salary: parseLocalizedNumber(empSalary),
+      work_hours_per_day: parseLocalizedNumber(empWorkHours) || 8,
     });
     if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
     toast({ title: "✅ Funcionário cadastrado!" });
