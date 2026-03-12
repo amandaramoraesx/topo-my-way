@@ -1,12 +1,47 @@
+import { useState, useEffect, useCallback } from "react";
 import { useApp } from "@/context/AppContext";
+import { supabase } from "@/integrations/supabase/client";
+
+interface DashProjeto {
+  id: string;
+  nome: string;
+  tipo: string;
+  cliente: string;
+  status: string;
+}
 
 export default function DashboardView() {
-  const { projetos, financas, setCurrentView } = useApp();
+  const { setCurrentView } = useApp();
+  const [projetos, setProjetos] = useState<DashProjeto[]>([]);
+  const [rec, setRec] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Projetos
+      const { data: pData } = await supabase
+        .from("projects")
+        .select("id, nome, tipo, cliente, status")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      setProjetos((pData || []).map((p: any) => ({ id: p.id, nome: p.nome, tipo: p.tipo, cliente: p.cliente || "", status: p.status })));
+
+      // Receita do mês (ignora erro se não tiver permissão)
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10);
+      const { data: fData } = await supabase
+        .from("finances")
+        .select("valor")
+        .eq("tipo", "receita")
+        .gte("data", startOfMonth)
+        .lte("data", endOfMonth);
+      setRec((fData || []).reduce((s: number, f: any) => s + Number(f.valor), 0));
+    };
+    fetchData();
+  }, []);
+
   const ativos = projetos.filter(p => p.status !== "concluido").length;
   const exig = projetos.filter(p => p.status === "exigencia").length;
-  const mes = new Date().getMonth();
-  const ano = new Date().getFullYear();
-  const rec = financas.filter(f => f.tipo === "receita" && new Date(f.data).getMonth() === mes && new Date(f.data).getFullYear() === ano).reduce((s, f) => s + f.valor, 0);
 
   const stats = [
     { value: ativos, label: "Ativos", icon: "📁", color: "text-accent" },
@@ -41,7 +76,6 @@ export default function DashboardView() {
 
   return (
     <div className="space-y-5 pb-6">
-      {/* Stats row - horizontal scroll on mobile */}
       <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1 snap-x">
         {stats.map((s, i) => (
           <div key={i} className="min-w-[120px] flex-1 bg-card border border-border rounded-xl p-4 snap-start">
@@ -52,7 +86,6 @@ export default function DashboardView() {
         ))}
       </div>
 
-      {/* Tools grid - 2 cols on mobile, 3 on md */}
       <div>
         <h2 className="text-base font-bold mb-3">Ferramentas</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -73,7 +106,6 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* Agents */}
       <div>
         <h2 className="text-base font-bold mb-3">Agentes IA</h2>
         <div className="grid grid-cols-3 gap-3">
@@ -95,7 +127,6 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* Projetos recentes */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-base font-bold">Projetos Recentes</h2>
@@ -128,7 +159,6 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* Mapa de Progresso */}
       <div>
         <h2 className="text-base font-bold mb-3">Progresso</h2>
         <div className="bg-card border border-border rounded-xl p-4 space-y-3">

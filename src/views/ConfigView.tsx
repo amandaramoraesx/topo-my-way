@@ -1,14 +1,50 @@
-import { useState } from "react";
-import { useApp } from "@/context/AppContext";
+import { useState, useEffect, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+
+interface EmpresaData {
+  nome: string;
+  rt: string;
+  crea: string;
+  tel: string;
+  email: string;
+  cidade: string;
+}
 
 export default function ConfigView() {
-  const { empresa, setEmpresa } = useApp();
-  const [emp, setEmp] = useState(empresa);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [emp, setEmp] = useState<EmpresaData>({ nome: "", rt: "", crea: "", tel: "", email: "", cidade: "" });
+  const [loading, setLoading] = useState(true);
+  const [settingsId, setSettingsId] = useState<string | null>(null);
 
-  const salvarEmpresa = () => {
-    setEmpresa(emp);
-    localStorage.setItem("rt_empresa", JSON.stringify(emp));
-    alert("✅ Dados da empresa salvos!");
+  const fetchEmpresa = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("company_settings")
+      .select("*")
+      .limit(1)
+      .single();
+    if (data) {
+      setEmp({ nome: data.nome || "", rt: data.rt || "", crea: data.crea || "", tel: data.tel || "", email: data.email || "", cidade: data.cidade || "" });
+      setSettingsId(data.id);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { fetchEmpresa(); }, [fetchEmpresa]);
+
+  const salvarEmpresa = async () => {
+    if (!settingsId || !user) return;
+    const { error } = await supabase
+      .from("company_settings")
+      .update({ ...emp, updated_by: user.id })
+      .eq("id", settingsId);
+    if (error) {
+      toast({ title: "Erro ao salvar", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "✅ Dados da empresa salvos!" });
   };
 
   const tools = [
@@ -21,6 +57,8 @@ export default function ConfigView() {
     { name: "Agente SIGEF", status: "Fase 2", cls: "bg-accent/20 text-accent" },
     { name: "Agente Cartório", status: "Fase 2", cls: "bg-accent/20 text-accent" },
   ];
+
+  if (loading) return <div className="text-center py-10 text-muted-foreground animate-pulse">Carregando...</div>;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

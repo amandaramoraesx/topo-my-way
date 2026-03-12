@@ -56,6 +56,42 @@ export type Database = {
         }
         Relationships: []
       }
+      company_settings: {
+        Row: {
+          cidade: string | null
+          crea: string | null
+          email: string | null
+          id: string
+          nome: string
+          rt: string | null
+          tel: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          cidade?: string | null
+          crea?: string | null
+          email?: string | null
+          id?: string
+          nome?: string
+          rt?: string | null
+          tel?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          cidade?: string | null
+          crea?: string | null
+          email?: string | null
+          id?: string
+          nome?: string
+          rt?: string | null
+          tel?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       employee_payments: {
         Row: {
           amount: number
@@ -139,6 +175,39 @@ export type Database = {
         }
         Relationships: []
       }
+      finances: {
+        Row: {
+          categoria: string
+          created_at: string
+          data: string
+          descricao: string
+          id: string
+          tipo: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          categoria?: string
+          created_at?: string
+          data?: string
+          descricao?: string
+          id?: string
+          tipo?: string
+          user_id: string
+          valor?: number
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          data?: string
+          descricao?: string
+          id?: string
+          tipo?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -163,6 +232,48 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          cliente: string | null
+          created_at: string
+          id: string
+          nome: string
+          obs: string | null
+          prazo: string | null
+          status: string
+          tipo: string
+          updated_at: string
+          user_id: string
+          valor: string | null
+        }
+        Insert: {
+          cliente?: string | null
+          created_at?: string
+          id?: string
+          nome: string
+          obs?: string | null
+          prazo?: string | null
+          status?: string
+          tipo?: string
+          updated_at?: string
+          user_id: string
+          valor?: string | null
+        }
+        Update: {
+          cliente?: string | null
+          created_at?: string
+          id?: string
+          nome?: string
+          obs?: string | null
+          prazo?: string | null
+          status?: string
+          tipo?: string
+          updated_at?: string
+          user_id?: string
+          valor?: string | null
         }
         Relationships: []
       }

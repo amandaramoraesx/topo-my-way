@@ -8,12 +8,6 @@ type ViewId =
 interface AppContextType {
   currentView: ViewId;
   setCurrentView: (view: ViewId) => void;
-  empresa: EmpresaData;
-  setEmpresa: (e: EmpresaData) => void;
-  projetos: Projeto[];
-  setProjetos: (p: Projeto[]) => void;
-  financas: Financa[];
-  setFinancas: (f: Financa[]) => void;
 }
 
 export interface EmpresaData {
@@ -58,17 +52,9 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [currentView, setCurrentView] = useState<ViewId>("home");
-  const [empresa, setEmpresa] = useState<EmpresaData>(() => JSON.parse(localStorage.getItem("rt_empresa") || '{"nome":"Rodrigues Topografia","rt":"","crea":"","tel":"","email":"","cidade":""}'));
-  const [projetos, setProjetos] = useState<Projeto[]>(() => JSON.parse(localStorage.getItem("rt_projetos") || "[]"));
-  const [financas, setFinancas] = useState<Financa[]>(() => JSON.parse(localStorage.getItem("rt_financas") || "[]"));
 
   return (
-    <AppContext.Provider value={{
-      currentView, setCurrentView,
-      empresa, setEmpresa,
-      projetos, setProjetos,
-      financas, setFinancas,
-    }}>
+    <AppContext.Provider value={{ currentView, setCurrentView }}>
       {children}
     </AppContext.Provider>
   );
