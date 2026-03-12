@@ -135,8 +135,10 @@ export default function ClientesView() {
     setEditingClient(client);
     setName(client.name);
     setAddress(client.address || "");
+    setNeighborhood(client.neighborhood || "");
     setPropertyName(client.property_name || "");
     setServiceType(client.service_type || "");
+    setReferralSource(client.referral_source || "");
     setNotes(client.notes || "");
     setShowForm(true);
   };
