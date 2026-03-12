@@ -47,7 +47,7 @@ export default function ModelosView({ categoryFilter }: { categoryFilter?: strin
 
   // Form state
   const [name, setName] = useState("");
-  const [category, setCategory] = useState<string>("memorial");
+  const [category, setCategory] = useState<string>(categoryFilter || "memorial");
   const [subType, setSubType] = useState<string>("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
