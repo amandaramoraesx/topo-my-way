@@ -334,10 +334,31 @@ export default function TopoGeoView() {
         </div>
 
         {activeTab === "memorial" && (
-          <div className="text-center py-16 text-muted-foreground">
-            <div className="text-[40px] mb-3">📄</div>
-            <p>Preencha os dados e clique em<br /><strong className="text-primary">✦ Gerar Memorial com IA</strong></p>
-          </div>
+          memorialContent ? (
+            <div className="bg-card border border-border rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-foreground">Memorial Descritivo</h3>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(memorialContent);
+                    toast({ title: "Memorial copiado!" });
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-secondary text-foreground border border-border hover:border-primary hover:text-primary transition-all"
+                >
+                  📋 Copiar
+                </button>
+              </div>
+              <div className="prose prose-sm max-w-none text-foreground font-mono text-[12px] leading-relaxed whitespace-pre-wrap">
+                {memorialContent}
+              </div>
+              {loading && <div className="mt-3 text-xs text-primary animate-pulse">Gerando...</div>}
+            </div>
+          ) : (
+            <div className="text-center py-16 text-muted-foreground">
+              <div className="text-[40px] mb-3">📄</div>
+              <p>Preencha os dados e clique em<br /><strong className="text-primary">✦ Gerar Memorial com IA</strong></p>
+            </div>
+          )
         )}
 
         {activeTab === "planta" && (
