@@ -80,7 +80,7 @@ export default function ExigenciaView() {
 
           {/* Exigência CRI - File Upload */}
           <FileUploadField
-            label="Exigência CRI"
+            label="EXIGÊNCIA"
             description="Anexe o documento da exigência do cartório"
             file={exigenciaFile}
             onClear={() => setExigenciaFile(null)}
