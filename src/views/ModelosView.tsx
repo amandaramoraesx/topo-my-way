@@ -37,6 +37,15 @@ const SUB_TYPES_ORCAMENTO = [
   "Outro",
 ];
 
+const SUB_TYPES_LAUDO = [
+  "Avaliação de Imóvel Rural",
+  "Avaliação de Imóvel Urbano",
+  "Pericial Topográfico",
+  "Vistoria de Obra",
+  "Confrontação de Limites",
+  "Outro",
+];
+
 export default function ModelosView({ categoryFilter }: { categoryFilter?: string }) {
   const { user } = useAuth();
   const { toast } = useToast();
