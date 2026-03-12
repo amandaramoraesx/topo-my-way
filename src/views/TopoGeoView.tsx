@@ -373,7 +373,7 @@ export default function TopoGeoView() {
         )}
 
         {activeTab === "exportar" && (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
               { icon: "🗂️", name: "DXF — AutoCAD", desc: "3 layers: PERIMETRO, VERTICES, TEXTOS", onClick: exportDXF },
               { icon: "📊", name: "CSV — Coordenadas", desc: "Planilha com todos os vértices UTM", onClick: exportCSV },
