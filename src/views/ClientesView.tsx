@@ -387,12 +387,29 @@ export default function ClientesView() {
                 <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Endereço completo" />
               </div>
               <div className="space-y-1.5">
+                <Label className="text-xs">Vila / Bairro</Label>
+                <Input value={neighborhood} onChange={(e) => setNeighborhood(e.target.value)} placeholder="Ex: Vila Rio Branco" />
+              </div>
+              <div className="space-y-1.5">
                 <Label className="text-xs">Nome da Propriedade</Label>
                 <Input value={propertyName} onChange={(e) => setPropertyName(e.target.value)} placeholder="Ex: Fazenda Boa Vista" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Tipo de Serviço</Label>
                 <Input value={serviceType} onChange={(e) => setServiceType(e.target.value)} placeholder="Ex: Georreferenciamento" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Veio de</Label>
+                <select
+                  value={referralSource}
+                  onChange={(e) => setReferralSource(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">Selecione...</option>
+                  {referralOptions.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
               </div>
             </div>
             <div className="space-y-1.5">
