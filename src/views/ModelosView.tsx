@@ -37,6 +37,15 @@ const SUB_TYPES_ORCAMENTO = [
   "Outro",
 ];
 
+const SUB_TYPES_LAUDO = [
+  "Avaliação de Imóvel Rural",
+  "Avaliação de Imóvel Urbano",
+  "Pericial Topográfico",
+  "Vistoria de Obra",
+  "Confrontação de Limites",
+  "Outro",
+];
+
 export default function ModelosView({ categoryFilter }: { categoryFilter?: string }) {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -146,7 +155,7 @@ export default function ModelosView({ categoryFilter }: { categoryFilter?: strin
   };
 
   const filtered = filter === "all" ? templates : templates.filter((t) => t.category === filter);
-  const subOptions = category === "memorial" ? SUB_TYPES_MEMORIAL : SUB_TYPES_ORCAMENTO;
+  const subOptions = category === "memorial" ? SUB_TYPES_MEMORIAL : category === "laudo" ? SUB_TYPES_LAUDO : SUB_TYPES_ORCAMENTO;
 
   const formatSize = (bytes: number | null) => {
     if (!bytes) return "—";
@@ -300,7 +309,7 @@ export default function ModelosView({ categoryFilter }: { categoryFilter?: strin
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-semibold text-foreground truncate">{t.name}</span>
                     <Badge variant="secondary" className="text-[10px] shrink-0">
-                      {t.category === "memorial" ? "📐 Memorial" : "📋 Orçamento"}
+                      {t.category === "memorial" ? "📐 Memorial" : t.category === "laudo" ? "📋 Laudo" : "📋 Orçamento"}
                     </Badge>
                     {t.sub_type && (
                       <Badge variant="outline" className="text-[10px] shrink-0">{t.sub_type}</Badge>
