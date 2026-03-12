@@ -24,7 +24,7 @@ function fmtAz(deg: number) {
 }
 
 export default function TopoGeoView() {
-  const { empresa } = useApp();
+  
   const { session } = useAuth();
   const { toast } = useToast();
   const [vertices, setVertices] = useState<Vertice[]>([]);
