@@ -154,9 +154,59 @@ export default function FuncionariosView() {
     if (!ts) return "—";
     return new Date(ts).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
   };
+  const fmtHours = (h: number) => {
+    const hrs = Math.floor(h);
+    const mins = Math.round((h - hrs) * 60);
+    return `${hrs}h${mins > 0 ? String(mins).padStart(2, "0") + "min" : ""}`;
+  };
 
-  const tabs = ["cadastro", "ponto", "pagamentos"] as const;
-  const tabLabels = { cadastro: "👥 Cadastro", ponto: "⏰ Ponto", pagamentos: "💵 Pagamentos" };
+  // Calculate worked hours for a time record
+  function calcWorkedHours(tr: TimeRecord): number {
+    if (!tr.clock_in || !tr.clock_out) return 0;
+    const cin = new Date(tr.clock_in).getTime();
+    const cout = new Date(tr.clock_out).getTime();
+    let total = (cout - cin) / 3600000; // hours
+    if (tr.lunch_out && tr.lunch_in) {
+      const lout = new Date(tr.lunch_out).getTime();
+      const lin = new Date(tr.lunch_in).getTime();
+      total -= (lin - lout) / 3600000;
+    }
+    return Math.max(0, total);
+  }
+
+  // Get overtime data per employee for selected month
+  function getOvertimeData() {
+    const filtered = timeRecords.filter(tr => {
+      const matchMonth = tr.date.startsWith(horasMonth);
+      const matchEmp = !horasFilterEmployee || tr.employee_id === horasFilterEmployee;
+      return matchMonth && matchEmp;
+    });
+
+    const byEmployee: Record<string, { worked: number; expected: number; records: number }> = {};
+    
+    for (const tr of filtered) {
+      const emp = employees.find(e => e.id === tr.employee_id);
+      if (!emp) continue;
+      if (!byEmployee[tr.employee_id]) {
+        byEmployee[tr.employee_id] = { worked: 0, expected: 0, records: 0 };
+      }
+      byEmployee[tr.employee_id].worked += calcWorkedHours(tr);
+      byEmployee[tr.employee_id].expected += emp.work_hours_per_day;
+      byEmployee[tr.employee_id].records += 1;
+    }
+
+    return Object.entries(byEmployee).map(([empId, data]) => ({
+      employeeId: empId,
+      name: getEmployeeName(empId),
+      employee: employees.find(e => e.id === empId),
+      ...data,
+      overtime: Math.max(0, data.worked - data.expected),
+      deficit: Math.max(0, data.expected - data.worked),
+    }));
+  }
+
+  const tabs = ["cadastro", "ponto", "pagamentos", "horas-extras"] as const;
+  const tabLabels = { cadastro: "👥 Cadastro", ponto: "⏰ Ponto", pagamentos: "💵 Pagamentos", "horas-extras": "🕐 Horas Extras" };
 
   if (loading) return <div className="text-center text-muted-foreground py-12">Carregando...</div>;
 
