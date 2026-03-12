@@ -91,7 +91,7 @@ export default function ExigenciaView() {
 
           {/* Memorial a corrigir - File Upload */}
           <FileUploadField
-            label="Memorial a Corrigir (opcional)"
+            label="MEMORIAL A CORRIGIR"
             description="Anexe o memorial que foi rejeitado"
             file={memorialFile}
             onClear={() => setMemorialFile(null)}
