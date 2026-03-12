@@ -24,6 +24,7 @@ export default function ProjetosView() {
   const update = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
 
   const statusMap: Record<string, string> = { em_andamento: "🔵 Em Andamento", exigencia: "🔴 Exigência", aguardando: "🟡 Aguardando", concluido: "🟢 Concluído" };
+  const statusBadge: Record<string, string> = { em_andamento: "bg-accent/20 text-accent", exigencia: "bg-warning/20 text-warning", aguardando: "bg-gold/20 text-gold", concluido: "bg-success/20 text-success" };
 
   const fetchProjetos = useCallback(async () => {
     const { data, error } = await supabase
@@ -82,25 +83,26 @@ export default function ProjetosView() {
           <div className="text-xl font-bold">Projetos</div>
           <div className="text-[13px] text-muted-foreground">Acompanhe todos os projetos da Rodrigues Topografia</div>
         </div>
-        <button onClick={() => setModalOpen(true)} className="px-4 py-2 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">+ Novo Projeto</button>
+        <button onClick={() => setModalOpen(true)} className="px-4 py-2 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">+ Novo</button>
       </div>
       <div className="bg-card border border-border rounded-xl overflow-hidden">
         {loading ? (
           <div className="text-center py-10 text-muted-foreground animate-pulse">Carregando...</div>
+        ) : projetos.length === 0 ? (
+          <div className="text-center py-10 text-muted-foreground">Nenhum projeto cadastrado.</div>
         ) : (
-          <table className="w-full border-collapse text-xs">
-            <thead>
-              <tr className="bg-secondary">
-                {["Projeto","Tipo","Cliente","Status","Prazo","Valor","Ações"].map(h => (
-                  <th key={h} className="px-2.5 py-2 text-left text-[10px] text-muted-foreground uppercase tracking-wide border-b border-border">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {projetos.length === 0 ? (
-                <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">Nenhum projeto cadastrado.</td></tr>
-              ) : (
-                projetos.map(p => (
+          <>
+            {/* Desktop table */}
+            <table className="w-full border-collapse text-xs hidden md:table">
+              <thead>
+                <tr className="bg-secondary">
+                  {["Projeto","Tipo","Cliente","Status","Prazo","Valor","Ações"].map(h => (
+                    <th key={h} className="px-2.5 py-2 text-left text-[10px] text-muted-foreground uppercase tracking-wide border-b border-border">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {projetos.map(p => (
                   <tr key={p.id} className="hover:bg-secondary/30">
                     <td className="px-2.5 py-2 font-semibold border-b border-border">{p.nome}</td>
                     <td className="px-2.5 py-2 border-b border-border"><span className="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded">{p.tipo}</span></td>
@@ -110,10 +112,29 @@ export default function ProjetosView() {
                     <td className="px-2.5 py-2 border-b border-border font-mono text-success">{p.valor ? `R$${parseFloat(p.valor).toLocaleString("pt-BR")}` : "—"}</td>
                     <td className="px-2.5 py-2 border-b border-border"><button onClick={() => del(p.id)} className="px-2 py-1 rounded text-xs bg-destructive/10 text-destructive border border-destructive/20">✕</button></td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ))}
+              </tbody>
+            </table>
+            {/* Mobile cards */}
+            <div className="md:hidden divide-y divide-border">
+              {projetos.map(p => (
+                <div key={p.id} className="p-3 space-y-1.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[13px] font-semibold truncate">{p.nome}</div>
+                      <div className="text-[11px] text-muted-foreground truncate">{p.tipo} · {p.cliente || "—"}</div>
+                    </div>
+                    <button onClick={() => del(p.id)} className="px-1.5 py-0.5 rounded text-xs bg-destructive/10 text-destructive border border-destructive/20 shrink-0">✕</button>
+                  </div>
+                  <div className="flex items-center gap-3 text-[11px]">
+                    <span className={`font-bold px-1.5 py-0.5 rounded ${statusBadge[p.status] || "bg-accent/20 text-accent"}`}>{statusMap[p.status] || p.status}</span>
+                    {p.prazo && <span className="text-muted-foreground font-mono">📅 {p.prazo}</span>}
+                    {p.valor && <span className="text-success font-mono font-bold">R${parseFloat(p.valor).toLocaleString("pt-BR")}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
