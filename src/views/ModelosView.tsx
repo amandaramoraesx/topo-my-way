@@ -155,7 +155,7 @@ export default function ModelosView({ categoryFilter }: { categoryFilter?: strin
   };
 
   const filtered = filter === "all" ? templates : templates.filter((t) => t.category === filter);
-  const subOptions = category === "memorial" ? SUB_TYPES_MEMORIAL : SUB_TYPES_ORCAMENTO;
+  const subOptions = category === "memorial" ? SUB_TYPES_MEMORIAL : category === "laudo" ? SUB_TYPES_LAUDO : SUB_TYPES_ORCAMENTO;
 
   const formatSize = (bytes: number | null) => {
     if (!bytes) return "—";
