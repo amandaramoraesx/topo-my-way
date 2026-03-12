@@ -13,6 +13,7 @@ const navItems = [
   { id: "laudos" as const, icon: "📄", label: "Laudos & Perícias", badge: "NOVO", badgeType: "new" },
   { section: "Gestão" },
   { id: "financeiro" as const, icon: "💰", label: "Financeiro", badge: "NOVO", badgeType: "new" },
+  { id: "funcionarios" as const, icon: "👷", label: "Funcionários", badge: "NOVO", badgeType: "new" },
   { id: "projetos" as const, icon: "📁", label: "Projetos", badge: "NOVO", badgeType: "new" },
   { section: "Marketing & IA" },
   { id: "instagram" as const, icon: "📸", label: "Instagram IA", badge: "NOVO", badgeType: "new" },
