@@ -210,7 +210,7 @@ export default function TopoGeoView() {
   const tabs = ["referência", "memorial", "planta", "volumes", "exportar"];
 
   return (
-    <div className="grid grid-cols-[420px_1fr] gap-5 h-[calc(100vh-116px)] overflow-hidden">
+    <div className="flex flex-col lg:grid lg:grid-cols-[420px_1fr] gap-5 lg:h-[calc(100vh-116px)] lg:overflow-hidden">
       {/* LEFT PANEL */}
       <div className="overflow-y-auto pr-1 space-y-3">
         {/* Tipo de Serviço */}
