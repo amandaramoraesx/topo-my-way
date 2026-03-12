@@ -37,7 +37,7 @@ const SUB_TYPES_ORCAMENTO = [
   "Outro",
 ];
 
-export default function ModelosView() {
+export default function ModelosView({ categoryFilter }: { categoryFilter?: string }) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [templates, setTemplates] = useState<Template[]>([]);
