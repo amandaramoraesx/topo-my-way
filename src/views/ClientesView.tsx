@@ -172,7 +172,10 @@ export default function ClientesView() {
       setUploading(false);
       return;
     }
-    const filePath = `${user.id}/${selectedClient.id}/${Date.now()}_${file.name}`;
+    const safeName = file.name
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z0-9._-]/g, "_");
+    const filePath = `${user.id}/${selectedClient.id}/${Date.now()}_${safeName}`;
     const { error } = await supabase.storage.from("client-files").upload(filePath, file);
     if (error) {
       toast.error("Erro ao enviar arquivo");
