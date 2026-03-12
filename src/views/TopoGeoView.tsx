@@ -136,6 +136,75 @@ export default function TopoGeoView() {
     a.download = name; a.click();
   };
 
+  const generateMemorial = async () => {
+    if (!session) {
+      toast({ title: "Faça login para gerar o memorial", variant: "destructive" });
+      return;
+    }
+    if (vertices.length < 3) {
+      toast({ title: "Adicione pelo menos 3 vértices", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    setMemorialContent("");
+    setActiveTab("memorial");
+
+    try {
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-memorial`;
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ vertices, formData, tipoServico }),
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({ error: "Erro desconhecido" }));
+        throw new Error(err.error || `Erro ${resp.status}`);
+      }
+
+      const reader = resp.body!.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let content = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let idx: number;
+        while ((idx = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, idx);
+          buffer = buffer.slice(idx + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (!line.startsWith("data: ")) continue;
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") break;
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const delta = parsed.choices?.[0]?.delta?.content;
+            if (delta) {
+              content += delta;
+              setMemorialContent(content);
+            }
+          } catch { /* partial JSON, skip */ }
+        }
+      }
+
+      if (!content) {
+        toast({ title: "Nenhum conteúdo gerado", variant: "destructive" });
+      }
+    } catch (e: any) {
+      console.error("Memorial generation error:", e);
+      toast({ title: e.message || "Erro ao gerar memorial", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const tabs = ["memorial", "planta", "volumes", "exportar"];
 
   return (
