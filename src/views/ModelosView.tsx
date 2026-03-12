@@ -156,7 +156,7 @@ export default function ModelosView() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-5 h-[calc(100vh-116px)] overflow-hidden">
+    <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-5">
       {/* Upload form */}
       <div className="overflow-y-auto pr-1">
         <div className="bg-card border border-border rounded-xl p-5">
