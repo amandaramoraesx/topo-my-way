@@ -1,27 +1,78 @@
-import { useState } from "react";
-import { useApp, type Projeto } from "@/context/AppContext";
+import { useState, useEffect, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+
+interface Projeto {
+  id: string;
+  nome: string;
+  tipo: string;
+  cliente: string;
+  status: string;
+  prazo: string;
+  valor: string;
+  obs: string;
+}
 
 export default function ProjetosView() {
-  const { projetos, setProjetos } = useApp();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [projetos, setProjetos] = useState<Projeto[]>([]);
+  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState({ nome: "", tipo: "Georreferenciamento Rural", cliente: "", status: "em_andamento", prazo: "", valor: "", obs: "" });
   const update = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }));
 
   const statusMap: Record<string, string> = { em_andamento: "🔵 Em Andamento", exigencia: "🔴 Exigência", aguardando: "🟡 Aguardando", concluido: "🟢 Concluído" };
 
-  const salvar = () => {
-    if (!form.nome) return;
-    const updated = [...projetos, { id: Date.now(), ...form }];
-    setProjetos(updated);
-    localStorage.setItem("rt_projetos", JSON.stringify(updated));
+  const fetchProjetos = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) {
+      toast({ title: "Erro ao carregar projetos", description: error.message, variant: "destructive" });
+    } else {
+      setProjetos((data || []).map((p: any) => ({
+        id: p.id, nome: p.nome, tipo: p.tipo, cliente: p.cliente || "",
+        status: p.status, prazo: p.prazo || "", valor: p.valor || "", obs: p.obs || "",
+      })));
+    }
+    setLoading(false);
+  }, [toast]);
+
+  useEffect(() => { fetchProjetos(); }, [fetchProjetos]);
+
+  const salvar = async () => {
+    if (!form.nome || !user) return;
+    const { error } = await supabase.from("projects").insert({
+      user_id: user.id,
+      nome: form.nome,
+      tipo: form.tipo,
+      cliente: form.cliente,
+      status: form.status,
+      prazo: form.prazo,
+      valor: form.valor,
+      obs: form.obs,
+    });
+    if (error) {
+      toast({ title: "Erro ao salvar", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Projeto salvo! ✅" });
     setModalOpen(false);
     setForm({ nome: "", tipo: "Georreferenciamento Rural", cliente: "", status: "em_andamento", prazo: "", valor: "", obs: "" });
+    fetchProjetos();
   };
 
-  const del = (id: number) => {
-    const updated = projetos.filter(p => p.id !== id);
-    setProjetos(updated);
-    localStorage.setItem("rt_projetos", JSON.stringify(updated));
+  const del = async (id: string) => {
+    if (!confirm("Excluir este projeto?")) return;
+    const { error } = await supabase.from("projects").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Erro ao excluir", description: error.message, variant: "destructive" });
+      return;
+    }
+    fetchProjetos();
   };
 
   return (
@@ -34,35 +85,38 @@ export default function ProjetosView() {
         <button onClick={() => setModalOpen(true)} className="px-4 py-2 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">+ Novo Projeto</button>
       </div>
       <div className="bg-card border border-border rounded-xl overflow-hidden">
-        <table className="w-full border-collapse text-xs">
-          <thead>
-            <tr className="bg-secondary">
-              {["Projeto","Tipo","Cliente","Status","Prazo","Valor","Ações"].map(h => (
-                <th key={h} className="px-2.5 py-2 text-left text-[10px] text-muted-foreground uppercase tracking-wide border-b border-border">{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {projetos.length === 0 ? (
-              <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">Nenhum projeto cadastrado.</td></tr>
-            ) : (
-              projetos.map(p => (
-                <tr key={p.id} className="hover:bg-secondary/30">
-                  <td className="px-2.5 py-2 font-semibold border-b border-border">{p.nome}</td>
-                  <td className="px-2.5 py-2 border-b border-border"><span className="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded">{p.tipo}</span></td>
-                  <td className="px-2.5 py-2 border-b border-border">{p.cliente || "—"}</td>
-                  <td className="px-2.5 py-2 border-b border-border">{statusMap[p.status] || p.status}</td>
-                  <td className="px-2.5 py-2 border-b border-border font-mono">{p.prazo || "—"}</td>
-                  <td className="px-2.5 py-2 border-b border-border font-mono text-success">{p.valor ? `R$${parseFloat(p.valor).toLocaleString("pt-BR")}` : "—"}</td>
-                  <td className="px-2.5 py-2 border-b border-border"><button onClick={() => del(p.id)} className="px-2 py-1 rounded text-xs bg-destructive/10 text-destructive border border-destructive/20">✕</button></td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+        {loading ? (
+          <div className="text-center py-10 text-muted-foreground animate-pulse">Carregando...</div>
+        ) : (
+          <table className="w-full border-collapse text-xs">
+            <thead>
+              <tr className="bg-secondary">
+                {["Projeto","Tipo","Cliente","Status","Prazo","Valor","Ações"].map(h => (
+                  <th key={h} className="px-2.5 py-2 text-left text-[10px] text-muted-foreground uppercase tracking-wide border-b border-border">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {projetos.length === 0 ? (
+                <tr><td colSpan={7} className="text-center py-10 text-muted-foreground">Nenhum projeto cadastrado.</td></tr>
+              ) : (
+                projetos.map(p => (
+                  <tr key={p.id} className="hover:bg-secondary/30">
+                    <td className="px-2.5 py-2 font-semibold border-b border-border">{p.nome}</td>
+                    <td className="px-2.5 py-2 border-b border-border"><span className="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded">{p.tipo}</span></td>
+                    <td className="px-2.5 py-2 border-b border-border">{p.cliente || "—"}</td>
+                    <td className="px-2.5 py-2 border-b border-border">{statusMap[p.status] || p.status}</td>
+                    <td className="px-2.5 py-2 border-b border-border font-mono">{p.prazo || "—"}</td>
+                    <td className="px-2.5 py-2 border-b border-border font-mono text-success">{p.valor ? `R$${parseFloat(p.valor).toLocaleString("pt-BR")}` : "—"}</td>
+                    <td className="px-2.5 py-2 border-b border-border"><button onClick={() => del(p.id)} className="px-2 py-1 rounded text-xs bg-destructive/10 text-destructive border border-destructive/20">✕</button></td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
 
-      {/* Modal */}
       {modalOpen && (
         <div className="fixed inset-0 bg-background/80 z-[9999] flex items-center justify-center" onClick={e => e.target === e.currentTarget && setModalOpen(false)}>
           <div className="bg-card border border-border rounded-xl p-6 w-full max-w-[540px]">

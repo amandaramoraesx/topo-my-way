@@ -1,14 +1,46 @@
-import { useState } from "react";
-import { useApp, type Financa } from "@/context/AppContext";
+import { useState, useEffect, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+
+interface Financa {
+  id: string;
+  tipo: string;
+  data: string;
+  descricao: string;
+  valor: number;
+  categoria: string;
+}
 
 export default function FinanceiroView() {
-  const { financas, setFinancas } = useApp();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [financas, setFinancas] = useState<Financa[]>([]);
+  const [loading, setLoading] = useState(true);
   const [tipo, setTipo] = useState("receita");
   const [data, setData] = useState(new Date().toISOString().slice(0, 10));
   const [desc, setDesc] = useState("");
   const [valor, setValor] = useState("");
   const [cat, setCat] = useState("Georreferenciamento");
   const [filtro, setFiltro] = useState("todos");
+
+  const fetchFinancas = useCallback(async () => {
+    const { data: rows, error } = await supabase
+      .from("finances")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) {
+      toast({ title: "Erro ao carregar finanças", description: error.message, variant: "destructive" });
+    } else {
+      setFinancas((rows || []).map((f: any) => ({
+        id: f.id, tipo: f.tipo, data: f.data, descricao: f.descricao,
+        valor: Number(f.valor), categoria: f.categoria,
+      })));
+    }
+    setLoading(false);
+  }, [toast]);
+
+  useEffect(() => { fetchFinancas(); }, [fetchFinancas]);
 
   const mes = new Date().getMonth();
   const ano = new Date().getFullYear();
@@ -20,19 +52,35 @@ export default function FinanceiroView() {
 
   const itens = filtro === "todos" ? financas : financas.filter(f => f.tipo === filtro);
 
-  const adicionar = () => {
-    if (!desc || !valor) return;
-    const updated = [...financas, { id: Date.now(), tipo, data, desc, valor: parseFloat(valor), cat }];
-    setFinancas(updated);
-    localStorage.setItem("rt_financas", JSON.stringify(updated));
+  const adicionar = async () => {
+    if (!desc || !valor || !user) return;
+    const { error } = await supabase.from("finances").insert({
+      user_id: user.id,
+      tipo,
+      data,
+      descricao: desc,
+      valor: parseFloat(valor),
+      categoria: cat,
+    });
+    if (error) {
+      toast({ title: "Erro ao salvar", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Lançamento salvo! ✅" });
     setDesc(""); setValor("");
+    fetchFinancas();
   };
 
-  const del = (id: number) => {
-    const updated = financas.filter(f => f.id !== id);
-    setFinancas(updated);
-    localStorage.setItem("rt_financas", JSON.stringify(updated));
+  const del = async (id: string) => {
+    const { error } = await supabase.from("finances").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Erro ao excluir", description: error.message, variant: "destructive" });
+      return;
+    }
+    fetchFinancas();
   };
+
+  if (loading) return <div className="text-center py-10 text-muted-foreground animate-pulse">Carregando...</div>;
 
   return (
     <div>
@@ -100,11 +148,11 @@ export default function FinanceiroView() {
             {itens.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground text-[13px]">Nenhum lançamento ainda</div>
             ) : (
-              itens.slice().reverse().map(f => (
+              itens.map(f => (
                 <div key={f.id} className="flex items-center justify-between px-3.5 py-2.5 border-b border-border">
                   <div>
-                    <div className="text-[13px]">{f.desc}</div>
-                    <div className="text-[11px] text-muted-foreground">{f.cat} · {f.data}</div>
+                    <div className="text-[13px]">{f.descricao}</div>
+                    <div className="text-[11px] text-muted-foreground">{f.categoria} · {f.data}</div>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`font-mono text-[13px] font-bold ${f.tipo === "receita" ? "text-success" : f.tipo === "despesa" ? "text-warning" : ""}`}>
