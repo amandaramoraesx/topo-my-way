@@ -20,8 +20,10 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          neighborhood: string | null
           notes: string | null
           property_name: string | null
+          referral_source: string | null
           service_type: string | null
           updated_at: string
           user_id: string
@@ -31,8 +33,10 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          neighborhood?: string | null
           notes?: string | null
           property_name?: string | null
+          referral_source?: string | null
           service_type?: string | null
           updated_at?: string
           user_id: string
@@ -42,8 +46,10 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          neighborhood?: string | null
           notes?: string | null
           property_name?: string | null
+          referral_source?: string | null
           service_type?: string | null
           updated_at?: string
           user_id?: string
