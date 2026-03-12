@@ -26,7 +26,7 @@ export default function OrcamentoView() {
               : "text-muted-foreground border-transparent hover:text-foreground"
           }`}
         >
-          📄 Modelos
+          📄 Referência
         </button>
       </div>
 
