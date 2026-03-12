@@ -175,19 +175,35 @@ export default function ModelosView({ categoryFilter }: { categoryFilter?: strin
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Categoria</label>
-                <Select value={category} onValueChange={(v) => { setCategory(v); setSubType(""); }}>
-                  <SelectTrigger className="bg-secondary/50 border-border/50">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="memorial">📐 Memorial Descritivo</SelectItem>
-                    <SelectItem value="orcamento">📋 Orçamento</SelectItem>
-                  </SelectContent>
-                </Select>
+            {!categoryFilter ? (
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Categoria</label>
+                  <Select value={category} onValueChange={(v) => { setCategory(v); setSubType(""); }}>
+                    <SelectTrigger className="bg-secondary/50 border-border/50">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="memorial">📐 Memorial Descritivo</SelectItem>
+                      <SelectItem value="orcamento">📋 Orçamento</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Subtipo</label>
+                  <Select value={subType} onValueChange={setSubType}>
+                    <SelectTrigger className="bg-secondary/50 border-border/50">
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subOptions.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
+            ) : (
               <div className="flex flex-col gap-1.5">
                 <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Subtipo</label>
                 <Select value={subType} onValueChange={setSubType}>
@@ -201,7 +217,7 @@ export default function ModelosView({ categoryFilter }: { categoryFilter?: strin
                   </SelectContent>
                 </Select>
               </div>
-            </div>
+            )}
 
             <div className="flex flex-col gap-1.5">
               <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Descrição (opcional)</label>
