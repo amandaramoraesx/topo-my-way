@@ -50,6 +50,8 @@ export default function ClientesView() {
   const [address, setAddress] = useState("");
   const [propertyName, setPropertyName] = useState("");
   const [serviceType, setServiceType] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
+  const [referralSource, setReferralSource] = useState("");
   const [notes, setNotes] = useState("");
 
   // Files state
