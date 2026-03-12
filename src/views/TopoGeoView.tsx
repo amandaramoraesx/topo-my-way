@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import type { Vertice } from "@/context/AppContext";
 import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import ModelosView from "@/views/ModelosView";
+
 
 function calcArea(pts: Vertice[]) {
   let a = 0;
@@ -205,7 +205,7 @@ export default function TopoGeoView() {
     }
   };
 
-  const tabs = ["memorial", "planta", "volumes", "exportar", "modelos"];
+  const tabs = ["memorial", "planta", "volumes", "exportar"];
 
   return (
     <div className="grid grid-cols-[420px_1fr] gap-5 h-[calc(100vh-116px)] overflow-hidden">
@@ -395,9 +395,6 @@ export default function TopoGeoView() {
           </div>
         )}
 
-        {activeTab === "modelos" && (
-          <ModelosView />
-        )}
       </div>
     </div>
   );

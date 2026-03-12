@@ -37,17 +37,17 @@ const SUB_TYPES_ORCAMENTO = [
   "Outro",
 ];
 
-export default function ModelosView() {
+export default function ModelosView({ categoryFilter }: { categoryFilter?: string }) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [filter, setFilter] = useState<string>("all");
+  const [filter, setFilter] = useState<string>(categoryFilter || "all");
 
   // Form state
   const [name, setName] = useState("");
-  const [category, setCategory] = useState<string>("memorial");
+  const [category, setCategory] = useState<string>(categoryFilter || "memorial");
   const [subType, setSubType] = useState<string>("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -235,25 +235,27 @@ export default function ModelosView() {
       <div className="overflow-y-auto pr-1">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[15px] font-bold">Modelos Salvos</h3>
-          <div className="flex gap-2">
-            {[
-              { value: "all", label: "Todos" },
-              { value: "memorial", label: "📐 Memoriais" },
-              { value: "orcamento", label: "📋 Orçamentos" },
-            ].map((f) => (
-              <button
-                key={f.value}
-                onClick={() => setFilter(f.value)}
-                className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${
-                  filter === f.value
-                    ? "bg-primary/10 text-primary border border-primary/20"
-                    : "text-muted-foreground hover:bg-secondary border border-transparent"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
+          {!categoryFilter && (
+            <div className="flex gap-2">
+              {[
+                { value: "all", label: "Todos" },
+                { value: "memorial", label: "📐 Memoriais" },
+                { value: "orcamento", label: "📋 Orçamentos" },
+              ].map((f) => (
+                <button
+                  key={f.value}
+                  onClick={() => setFilter(f.value)}
+                  className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${
+                    filter === f.value
+                      ? "bg-primary/10 text-primary border border-primary/20"
+                      : "text-muted-foreground hover:bg-secondary border border-transparent"
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {loading ? (
