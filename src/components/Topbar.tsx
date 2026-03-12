@@ -25,9 +25,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
         </div>
       </div>
       <div className="flex gap-2 items-center">
-        <span className="text-[11px] hidden sm:inline" style={{ color: apiKey ? "hsl(var(--success))" : "hsl(var(--muted-foreground))" }}>
-          {apiKey ? (provider === "gemini" ? "🟢 Gemini" : "🟢 Claude") : "⚪ API"}
-        </span>
+        <span className="text-[11px] hidden sm:inline text-success">🟢 IA Ativa</span>
         <button
           onClick={() => setCurrentView("config")}
           className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-secondary/80 text-foreground border border-border/50 hover:border-primary hover:text-primary transition-all"

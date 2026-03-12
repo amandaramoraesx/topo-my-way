@@ -2,19 +2,8 @@ import { useState } from "react";
 import { useApp } from "@/context/AppContext";
 
 export default function ConfigView() {
-  const { apiKey, setApiKey, provider, setProvider, model, setModel, empresa, setEmpresa } = useApp();
-  const [localKey, setLocalKey] = useState(apiKey ? "••••••••••••••••••••••" : "");
-  const [localProvider, setLocalProvider] = useState(provider);
-  const [localModel, setLocalModel] = useState(model);
+  const { empresa, setEmpresa } = useApp();
   const [emp, setEmp] = useState(empresa);
-  const [apiStatus, setApiStatus] = useState("");
-
-  const salvarAPI = () => {
-    if (localKey && !localKey.startsWith("•")) { setApiKey(localKey); localStorage.setItem("rt_api_key", localKey); }
-    setProvider(localProvider); localStorage.setItem("rt_provider", localProvider);
-    setModel(localModel); localStorage.setItem("rt_model", localModel);
-    setApiStatus(`✅ Salvo! Usando: ${localProvider === "gemini" ? "Gemini (Gratuito)" : "Claude (Anthropic)"}`);
-  };
 
   const salvarEmpresa = () => {
     setEmpresa(emp);
@@ -34,39 +23,13 @@ export default function ConfigView() {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div className="space-y-4">
         <div className="bg-card border border-border rounded-xl p-5">
-          <h3 className="mb-3.5 text-[15px] font-bold">🔑 Configuração de IA</h3>
-          <div className="space-y-3">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Provedor de IA</label>
-              <select value={localProvider} onChange={e => setLocalProvider(e.target.value as any)} className="bg-secondary border border-border text-foreground px-3 py-2 rounded-md text-[13px] focus:outline-none focus:border-primary">
-                <option value="anthropic">Anthropic — Claude (Pago, melhor qualidade)</option>
-                <option value="gemini">Google — Gemini (Gratuito ✦)</option>
-              </select>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Chave de API</label>
-              <input type="password" value={localKey} onChange={e => setLocalKey(e.target.value)} placeholder={localProvider === "gemini" ? "AIzaSy..." : "sk-ant-..."} className="bg-secondary border border-border text-foreground px-3 py-2 rounded-md text-[13px] focus:outline-none focus:border-primary w-full" />
-              <span className="text-[11px] text-muted-foreground">{localProvider === "gemini" ? "Obter em: aistudio.google.com → Get API Key (gratuito)" : "Obter em: console.anthropic.com"}</span>
-            </div>
-            {localProvider === "anthropic" && (
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Modelo de IA</label>
-                <select value={localModel} onChange={e => setLocalModel(e.target.value)} className="bg-secondary border border-border text-foreground px-3 py-2 rounded-md text-[13px] focus:outline-none focus:border-primary">
-                  <option value="claude-sonnet-4-6">claude-sonnet-4-6 (Recomendado)</option>
-                  <option value="claude-haiku-4-5-20251001">claude-haiku-4-5 (Mais rápido/barato)</option>
-                </select>
-              </div>
-            )}
-            {localProvider === "gemini" && (
-              <div className="p-3 rounded-lg bg-accent/10 border border-accent/20 text-accent text-xs">
-                🆓 <strong>Como obter chave Gemini gratuita:</strong><br />1. Acesse aistudio.google.com<br />2. Clique em Get API Key<br />3. Crie um projeto e copie a chave
-              </div>
-            )}
-            <button onClick={salvarAPI} className="px-4 py-2 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">💾 Salvar Configurações de API</button>
-            {apiStatus && <div className="text-xs text-muted-foreground">{apiStatus}</div>}
+          <h3 className="mb-3.5 text-[15px] font-bold">🤖 Inteligência Artificial</h3>
+          <div className="p-3 rounded-lg bg-success/10 border border-success/20 text-success text-xs">
+            ✅ <strong>IA configurada automaticamente.</strong><br />
+            Todos os módulos (Memorial, Exigência, Orçamento, Laudos, Instagram) já funcionam com IA integrada. Nenhuma chave de API necessária.
           </div>
         </div>
         <div className="bg-card border border-border rounded-xl p-5">
@@ -100,8 +63,7 @@ export default function ConfigView() {
           <h3 className="mb-2.5 text-[15px] font-bold">ℹ️ Sobre</h3>
           <div className="text-xs text-muted-foreground leading-relaxed">
             <strong className="text-foreground">Rodrigues Topografia — Hub Central</strong><br />
-            Versão 2.0 — Março 2026<br />
-            Desenvolvido com Claude (Anthropic)<br /><br />
+            Versão 2.0 — Março 2026<br /><br />
             Topógrafo Agrimensor Credenciado INCRA<br />
             Fase 1 completa · Fase 2 em andamento
           </div>
