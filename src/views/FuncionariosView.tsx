@@ -310,7 +310,6 @@ export default function FuncionariosView() {
                     <div className="text-[13px] font-medium">{getEmployeeName(tr.employee_id)}</div>
                     <div className="text-[11px] text-muted-foreground">
                       {tr.date} · {fmtTime(tr.clock_in)} → {fmtTime(tr.clock_out)}
-                      {tr.lunch_out && ` · Almoço: ${fmtTime(tr.lunch_out)}–${fmtTime(tr.lunch_in)}`}
                       {" · "}<span className="font-semibold">{fmtHours(calcWorkedHours(tr))}</span>
                     </div>
                     {tr.notes && <div className="text-[10px] text-accent mt-0.5">{tr.notes}</div>}
