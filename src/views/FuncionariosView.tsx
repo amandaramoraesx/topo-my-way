@@ -291,10 +291,6 @@ export default function FuncionariosView() {
               <InputField label="Data" value={pontoDate} onChange={setPontoDate} type="date" />
               <div className="grid grid-cols-2 gap-2.5">
                 <InputField label="Entrada" value={clockIn} onChange={setClockIn} type="time" />
-                <InputField label="Saída Almoço" value={lunchOut} onChange={setLunchOut} type="time" />
-              </div>
-              <div className="grid grid-cols-2 gap-2.5">
-                <InputField label="Volta Almoço" value={lunchIn} onChange={setLunchIn} type="time" />
                 <InputField label="Saída" value={clockOut} onChange={setClockOut} type="time" />
               </div>
               <InputField label="Observações" value={pontoNotes} onChange={setPontoNotes} placeholder="Ex: faltou, atestado..." />
