@@ -49,14 +49,12 @@ export default function FuncionariosView() {
   const [empPhone, setEmpPhone] = useState("");
   const [empEmail, setEmpEmail] = useState("");
   const [empSalary, setEmpSalary] = useState("");
-  const [empWorkHours, setEmpWorkHours] = useState("8");
+  const [empWorkHours, setEmpWorkHours] = useState("4");
 
   const [selEmployee, setSelEmployee] = useState("");
   const [pontoDate, setPontoDate] = useState(new Date().toISOString().slice(0, 10));
-  const [clockIn, setClockIn] = useState("08:00");
-  const [clockOut, setClockOut] = useState("17:00");
-  const [lunchOut, setLunchOut] = useState("12:00");
-  const [lunchIn, setLunchIn] = useState("13:00");
+  const [clockIn, setClockIn] = useState("07:00");
+  const [clockOut, setClockOut] = useState("11:00");
   const [pontoNotes, setPontoNotes] = useState("");
 
   const [payEmployee, setPayEmployee] = useState("");
@@ -104,11 +102,11 @@ export default function FuncionariosView() {
       phone: empPhone,
       email: empEmail,
       salary: parseLocalizedNumber(empSalary),
-      work_hours_per_day: parseLocalizedNumber(empWorkHours) || 8,
+      work_hours_per_day: parseLocalizedNumber(empWorkHours) || 4,
     });
     if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
     toast({ title: "✅ Funcionário cadastrado!" });
-    setEmpName(""); setEmpPhone(""); setEmpEmail(""); setEmpSalary(""); setEmpWorkHours("8");
+    setEmpName(""); setEmpPhone(""); setEmpEmail(""); setEmpSalary(""); setEmpWorkHours("4");
     loadData();
   }
 
@@ -126,8 +124,8 @@ export default function FuncionariosView() {
       date: pontoDate,
       clock_in: toTs(pontoDate, clockIn),
       clock_out: toTs(pontoDate, clockOut),
-      lunch_out: toTs(pontoDate, lunchOut),
-      lunch_in: toTs(pontoDate, lunchIn),
+      lunch_out: null,
+      lunch_in: null,
       notes: pontoNotes || null,
     });
     if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
@@ -293,10 +291,6 @@ export default function FuncionariosView() {
               <InputField label="Data" value={pontoDate} onChange={setPontoDate} type="date" />
               <div className="grid grid-cols-2 gap-2.5">
                 <InputField label="Entrada" value={clockIn} onChange={setClockIn} type="time" />
-                <InputField label="Saída Almoço" value={lunchOut} onChange={setLunchOut} type="time" />
-              </div>
-              <div className="grid grid-cols-2 gap-2.5">
-                <InputField label="Volta Almoço" value={lunchIn} onChange={setLunchIn} type="time" />
                 <InputField label="Saída" value={clockOut} onChange={setClockOut} type="time" />
               </div>
               <InputField label="Observações" value={pontoNotes} onChange={setPontoNotes} placeholder="Ex: faltou, atestado..." />
@@ -316,7 +310,6 @@ export default function FuncionariosView() {
                     <div className="text-[13px] font-medium">{getEmployeeName(tr.employee_id)}</div>
                     <div className="text-[11px] text-muted-foreground">
                       {tr.date} · {fmtTime(tr.clock_in)} → {fmtTime(tr.clock_out)}
-                      {tr.lunch_out && ` · Almoço: ${fmtTime(tr.lunch_out)}–${fmtTime(tr.lunch_in)}`}
                       {" · "}<span className="font-semibold">{fmtHours(calcWorkedHours(tr))}</span>
                     </div>
                     {tr.notes && <div className="text-[10px] text-accent mt-0.5">{tr.notes}</div>}
