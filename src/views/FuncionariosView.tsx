@@ -102,7 +102,7 @@ export default function FuncionariosView() {
       phone: empPhone,
       email: empEmail,
       salary: parseLocalizedNumber(empSalary),
-      work_hours_per_day: parseLocalizedNumber(empWorkHours) || 8,
+      work_hours_per_day: parseLocalizedNumber(empWorkHours) || 4,
     });
     if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
     toast({ title: "✅ Funcionário cadastrado!" });
