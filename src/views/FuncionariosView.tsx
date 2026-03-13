@@ -124,8 +124,8 @@ export default function FuncionariosView() {
       date: pontoDate,
       clock_in: toTs(pontoDate, clockIn),
       clock_out: toTs(pontoDate, clockOut),
-      lunch_out: toTs(pontoDate, lunchOut),
-      lunch_in: toTs(pontoDate, lunchIn),
+      lunch_out: null,
+      lunch_in: null,
       notes: pontoNotes || null,
     });
     if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
