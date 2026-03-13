@@ -52,9 +52,6 @@ export default function FuncionariosView() {
   const [empWorkHours, setEmpWorkHours] = useState("4");
 
   const [selEmployee, setSelEmployee] = useState("");
-  const [pontoDate, setPontoDate] = useState(new Date().toISOString().slice(0, 10));
-  const [clockIn, setClockIn] = useState("07:00");
-  const [clockOut, setClockOut] = useState("11:00");
   const [pontoNotes, setPontoNotes] = useState("");
 
   const [payEmployee, setPayEmployee] = useState("");
