@@ -112,21 +112,42 @@ export default function FuncionariosView() {
     loadData();
   }
 
-  async function addTimeRecord() {
+  // Find open time record (has clock_in but no clock_out) for an employee today
+  function getOpenRecord(employeeId: string) {
+    const today = new Date().toISOString().slice(0, 10);
+    return timeRecords.find(tr => tr.employee_id === employeeId && tr.date === today && tr.clock_in && !tr.clock_out);
+  }
+
+  async function punchIn() {
     if (!selEmployee || !user) return;
-    const toTs = (date: string, time: string) => `${date}T${time}:00`;
+    const today = new Date().toISOString().slice(0, 10);
+    const now = new Date().toISOString();
+    const open = getOpenRecord(selEmployee);
+    if (open) { toast({ title: "⚠️ Já existe entrada aberta", description: "Registre a saída primeiro.", variant: "destructive" }); return; }
     const { error } = await supabase.from("time_records").insert({
       employee_id: selEmployee,
       user_id: user.id,
-      date: pontoDate,
-      clock_in: toTs(pontoDate, clockIn),
-      clock_out: toTs(pontoDate, clockOut),
+      date: today,
+      clock_in: now,
+      clock_out: null,
       lunch_out: null,
       lunch_in: null,
       notes: pontoNotes || null,
     });
     if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
-    toast({ title: "✅ Ponto registrado!" });
+    toast({ title: "✅ Entrada registrada!" });
+    setPontoNotes("");
+    loadData();
+  }
+
+  async function punchOut() {
+    if (!selEmployee || !user) return;
+    const open = getOpenRecord(selEmployee);
+    if (!open) { toast({ title: "⚠️ Nenhuma entrada aberta", description: "Registre a entrada primeiro.", variant: "destructive" }); return; }
+    const now = new Date().toISOString();
+    const { error } = await supabase.from("time_records").update({ clock_out: now }).eq("id", open.id);
+    if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
+    toast({ title: "✅ Saída registrada!" });
     setPontoNotes("");
     loadData();
   }
