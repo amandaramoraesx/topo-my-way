@@ -297,24 +297,39 @@ export default function FuncionariosView() {
       {tab === "ponto" && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           <div className="bg-card border border-border rounded-xl p-5">
-            <h3 className="mb-3.5 text-sm font-bold">⏰ Registrar Ponto</h3>
+            <h3 className="mb-3.5 text-sm font-bold">⏰ Bater Ponto</h3>
             <div className="space-y-2.5">
               <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Funcionário</label>
+                <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Colaborador</label>
                 <select value={selEmployee} onChange={e => setSelEmployee(e.target.value)} className="bg-secondary border border-border text-foreground px-3 py-2 rounded-md text-[13px] focus:outline-none focus:border-primary">
                   <option value="">Selecione...</option>
                   {employees.map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
                 </select>
               </div>
-              <InputField label="Data" value={pontoDate} onChange={setPontoDate} type="date" />
-              <div className="grid grid-cols-2 gap-2.5">
-                <InputField label="Entrada" value={clockIn} onChange={setClockIn} type="time" />
-                <InputField label="Saída" value={clockOut} onChange={setClockOut} type="time" />
-              </div>
+              {selEmployee && (() => {
+                const open = getOpenRecord(selEmployee);
+                return (
+                  <div className="bg-secondary/50 rounded-lg p-3 text-center">
+                    {open ? (
+                      <div>
+                        <div className="text-[11px] text-muted-foreground mb-1">Entrada registrada às</div>
+                        <div className="text-lg font-bold font-mono text-primary">{fmtTime(open.clock_in)}</div>
+                      </div>
+                    ) : (
+                      <div className="text-[11px] text-muted-foreground">Nenhuma entrada aberta hoje</div>
+                    )}
+                  </div>
+                );
+              })()}
               <InputField label="Observações" value={pontoNotes} onChange={setPontoNotes} placeholder="Ex: faltou, atestado..." />
-              <button onClick={addTimeRecord} className="px-4 py-2 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">
-                ✅ Registrar Ponto
-              </button>
+              <div className="grid grid-cols-2 gap-2.5">
+                <button onClick={punchIn} className="px-4 py-2.5 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">
+                  🟢 Bater Entrada
+                </button>
+                <button onClick={punchOut} className="px-4 py-2.5 rounded-lg text-[13px] font-semibold bg-destructive text-destructive-foreground hover:opacity-90 transition-all">
+                  🔴 Bater Saída
+                </button>
+              </div>
             </div>
           </div>
           <div className="bg-card border border-border rounded-xl overflow-hidden">
