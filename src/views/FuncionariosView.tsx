@@ -365,11 +365,11 @@ export default function FuncionariosView() {
             <h3 className="mb-3.5 text-sm font-bold">+ Novo Funcionário</h3>
             <div className="space-y-2.5">
               <InputField label="Nome completo" value={empName} onChange={setEmpName} placeholder="Nome do funcionário" />
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <InputField label="Cargo" value={empRole} onChange={setEmpRole} />
                 <InputField label="Salário base (R$)" value={empSalary} onChange={setEmpSalary} placeholder="0,00" />
               </div>
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 <InputField label="Telefone" value={empPhone} onChange={setEmpPhone} placeholder="(00) 00000-0000" />
                 <InputField label="E-mail" value={empEmail} onChange={setEmpEmail} placeholder="email@..." />
                 <InputField label="Jornada (h/dia)" value={empWorkHours} onChange={setEmpWorkHours} placeholder="8" />
@@ -386,12 +386,12 @@ export default function FuncionariosView() {
               {employees.length === 0 ? (
                 <div className="p-8 text-center text-muted-foreground text-[13px]">Nenhum funcionário cadastrado</div>
               ) : employees.map(e => (
-                <div key={e.id} className="flex items-center justify-between px-4 py-3 border-b border-border">
-                  <div>
-                    <div className="text-[13px] font-medium">{e.name}</div>
-                    <div className="text-[11px] text-muted-foreground">{e.role} · {e.phone || "Sem tel."} · {fmt(e.salary || 0)}/mês · {e.work_hours_per_day}h/dia · diária {fmt(e.saturday_holiday_rate ?? 100)}</div>
+                <div key={e.id} className="flex items-start justify-between gap-2 px-4 py-3 border-b border-border">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[13px] font-medium break-words">{e.name}</div>
+                    <div className="text-[11px] text-muted-foreground break-words">{e.role} · {e.phone || "Sem tel."} · {fmt(e.salary || 0)}/mês · {e.work_hours_per_day}h/dia · diária {fmt(e.saturday_holiday_rate ?? 100)}</div>
                   </div>
-                  <button onClick={() => deleteEmployee(e.id)} className="text-muted-foreground hover:text-destructive text-xs transition-colors">✕</button>
+                  <button onClick={() => deleteEmployee(e.id)} className="shrink-0 text-muted-foreground hover:text-destructive text-xs transition-colors">✕</button>
                 </div>
               ))}
             </div>
@@ -419,22 +419,22 @@ export default function FuncionariosView() {
                   <>
                     <div className="bg-secondary/50 rounded-lg p-3">
                       <div className="text-[11px] text-muted-foreground mb-2 text-center">{punchStageInfo[stage].label}</div>
-                      <div className="grid grid-cols-4 gap-1.5 text-center">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
                         <div>
-                          <div className="text-[9px] text-muted-foreground uppercase">Entrada</div>
-                          <div className="text-[13px] font-bold font-mono text-primary">{fmtTime(tr?.clock_in ?? null)}</div>
+                          <div className="text-[10px] text-muted-foreground uppercase">Entrada</div>
+                          <div className="text-[14px] font-bold font-mono text-primary">{fmtTime(tr?.clock_in ?? null)}</div>
                         </div>
                         <div>
-                          <div className="text-[9px] text-muted-foreground uppercase">Saída Almoço</div>
-                          <div className="text-[13px] font-bold font-mono text-warning">{fmtTime(tr?.lunch_out ?? null)}</div>
+                          <div className="text-[10px] text-muted-foreground uppercase">Saída Almoço</div>
+                          <div className="text-[14px] font-bold font-mono text-warning">{fmtTime(tr?.lunch_out ?? null)}</div>
                         </div>
                         <div>
-                          <div className="text-[9px] text-muted-foreground uppercase">Volta Almoço</div>
-                          <div className="text-[13px] font-bold font-mono text-warning">{fmtTime(tr?.lunch_in ?? null)}</div>
+                          <div className="text-[10px] text-muted-foreground uppercase">Volta Almoço</div>
+                          <div className="text-[14px] font-bold font-mono text-warning">{fmtTime(tr?.lunch_in ?? null)}</div>
                         </div>
                         <div>
-                          <div className="text-[9px] text-muted-foreground uppercase">Saída</div>
-                          <div className="text-[13px] font-bold font-mono text-destructive">{fmtTime(tr?.clock_out ?? null)}</div>
+                          <div className="text-[10px] text-muted-foreground uppercase">Saída</div>
+                          <div className="text-[14px] font-bold font-mono text-destructive">{fmtTime(tr?.clock_out ?? null)}</div>
                         </div>
                       </div>
                     </div>
@@ -454,16 +454,16 @@ export default function FuncionariosView() {
               {timeRecords.length === 0 ? (
                 <div className="p-8 text-center text-muted-foreground text-[13px]">Nenhum registro de ponto</div>
               ) : timeRecords.map(tr => (
-                <div key={tr.id} className="flex items-center justify-between px-4 py-2.5 border-b border-border">
-                  <div>
-                    <div className="text-[13px] font-medium">{getEmployeeName(tr.employee_id)}</div>
-                    <div className="text-[11px] text-muted-foreground">
-                      {tr.date} · {fmtTime(tr.clock_in)} → {fmtTime(tr.lunch_out)} → {fmtTime(tr.lunch_in)} → {fmtTime(tr.clock_out)}
-                      {" · "}<span className="font-semibold">{fmtHours(calcWorkedHours(tr))}</span>
+                <div key={tr.id} className="flex items-start justify-between gap-2 px-4 py-2.5 border-b border-border">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[13px] font-medium break-words">{getEmployeeName(tr.employee_id)}</div>
+                    <div className="text-[11px] text-muted-foreground">{tr.date} · <span className="font-semibold">{fmtHours(calcWorkedHours(tr))}</span> trabalhadas</div>
+                    <div className="text-[10px] text-muted-foreground mt-0.5 break-words">
+                      Entrada {fmtTime(tr.clock_in)} · Almoço {fmtTime(tr.lunch_out)}–{fmtTime(tr.lunch_in)} · Saída {fmtTime(tr.clock_out)}
                     </div>
-                    {tr.notes && <div className="text-[10px] text-accent mt-0.5">{tr.notes}</div>}
+                    {tr.notes && <div className="text-[10px] text-accent mt-0.5 break-words">{tr.notes}</div>}
                   </div>
-                  <button onClick={() => deleteTimeRecord(tr.id)} className="text-muted-foreground hover:text-destructive text-xs transition-colors">✕</button>
+                  <button onClick={() => deleteTimeRecord(tr.id)} className="shrink-0 text-muted-foreground hover:text-destructive text-xs transition-colors">✕</button>
                 </div>
               ))}
             </div>
@@ -493,15 +493,15 @@ export default function FuncionariosView() {
                 if (!calc) return null;
                 return (
                   <div className="bg-secondary/50 rounded-lg p-3.5 space-y-1.5 text-[12px]">
-                    <div className="flex justify-between"><span className="text-muted-foreground">Período:</span><span className="font-semibold font-mono">{calc.label}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Dias úteis no período:</span><span className="font-mono">{calc.diasUteisEsperados}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Dias trabalhados:</span><span className="font-mono">{calc.diasTrabalhados}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Faltas:</span><span className="font-mono text-warning">{calc.diasFaltados}</span></div>
+                    <div className="flex justify-between gap-2"><span className="text-muted-foreground">Período:</span><span className="font-semibold font-mono shrink-0">{calc.label}</span></div>
+                    <div className="flex justify-between gap-2"><span className="text-muted-foreground">Dias úteis no período:</span><span className="font-mono shrink-0">{calc.diasUteisEsperados}</span></div>
+                    <div className="flex justify-between gap-2"><span className="text-muted-foreground">Dias trabalhados:</span><span className="font-mono shrink-0">{calc.diasTrabalhados}</span></div>
+                    <div className="flex justify-between gap-2"><span className="text-muted-foreground">Faltas:</span><span className="font-mono text-warning shrink-0">{calc.diasFaltados}</span></div>
                     {calc.diasFaltados > 0 && (
-                      <div className="flex justify-between"><span className="text-muted-foreground">Desconto por faltas:</span><span className="font-mono text-destructive">-{fmt(calc.desconto)}</span></div>
+                      <div className="flex justify-between gap-2"><span className="text-muted-foreground">Desconto por faltas:</span><span className="font-mono text-destructive shrink-0">-{fmt(calc.desconto)}</span></div>
                     )}
-                    <div className="flex justify-between border-t border-border pt-1.5 mt-1.5"><span className="font-semibold">Salário do período:</span><span className="font-mono font-bold text-success">{fmt(calc.salarioProporcional)}</span></div>
-                    <div className="flex justify-between pt-1.5"><span className="text-muted-foreground">Diárias sáb/feriado no período ({calc.diariasNoPeriodo.length}):</span><span className="font-mono">{fmt(calc.totalDiarias)}</span></div>
+                    <div className="flex justify-between gap-2 border-t border-border pt-1.5 mt-1.5"><span className="font-semibold">Salário do período:</span><span className="font-mono font-bold text-success shrink-0">{fmt(calc.salarioProporcional)}</span></div>
+                    <div className="flex justify-between gap-2 pt-1.5"><span className="text-muted-foreground break-words">Diárias sáb/feriado no período ({calc.diariasNoPeriodo.length}):</span><span className="font-mono shrink-0">{fmt(calc.totalDiarias)}</span></div>
                     <div className="text-[10px] text-muted-foreground italic">Diárias já foram pagas no dia trabalhado — não somam ao valor do salário acima.</div>
                     <button onClick={registrarPagamentoSalario} className="w-full mt-2 px-4 py-2 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">
                       💾 Lançar Pagamento do Salário ({fmt(calc.salarioProporcional)})
@@ -556,12 +556,12 @@ export default function FuncionariosView() {
               {payments.length === 0 ? (
                 <div className="p-8 text-center text-muted-foreground text-[13px]">Nenhum pagamento registrado</div>
               ) : payments.map(p => (
-                <div key={p.id} className="flex items-center justify-between px-4 py-2.5 border-b border-border">
-                  <div>
-                    <div className="text-[13px] font-medium">{getEmployeeName(p.employee_id)}</div>
-                    <div className="text-[11px] text-muted-foreground">{p.date} · {p.payment_type} · {p.description || "—"}</div>
+                <div key={p.id} className="flex items-start justify-between gap-2 px-4 py-2.5 border-b border-border">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[13px] font-medium break-words">{getEmployeeName(p.employee_id)}</div>
+                    <div className="text-[11px] text-muted-foreground break-words">{p.date} · {p.payment_type} · {p.description || "—"}</div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     <span className="font-mono text-[13px] font-bold text-success">{fmt(p.amount)}</span>
                     <button onClick={() => deletePayment(p.id)} className="text-muted-foreground hover:text-destructive text-xs transition-colors">✕</button>
                   </div>
@@ -634,9 +634,9 @@ export default function FuncionariosView() {
 
                     return (
                       <div key={d.employeeId} className="px-4 py-3">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-[13px] font-medium">{d.name}</span>
-                          <span className="text-[11px] text-muted-foreground">{d.records} dias</span>
+                        <div className="flex items-center justify-between gap-2 mb-1.5">
+                          <span className="text-[13px] font-medium break-words min-w-0">{d.name}</span>
+                          <span className="text-[11px] text-muted-foreground shrink-0">{d.records} dias</span>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-[12px]">
                           <div>

@@ -185,8 +185,8 @@ export default function FinanceiroView() {
               itens.map(f => (
                 <div key={f.id} className="flex items-center justify-between px-3 md:px-3.5 py-2.5 border-b border-border gap-2">
                   <div className="min-w-0 flex-1">
-                    <div className="text-[13px] truncate">{f.descricao}</div>
-                    <div className="text-[11px] text-muted-foreground truncate">
+                    <div className="text-[13px] break-words">{f.descricao}</div>
+                    <div className="text-[11px] text-muted-foreground break-words">
                       {f.categoria} · {f.data}{getClienteName(f.client_id) ? ` · 👤 ${getClienteName(f.client_id)}` : ""}
                     </div>
                   </div>

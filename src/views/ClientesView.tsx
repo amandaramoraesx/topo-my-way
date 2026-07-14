@@ -285,12 +285,12 @@ export default function ClientesView() {
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={() => setSelectedClient(null)}>
+          <Button variant="ghost" size="sm" className="shrink-0" onClick={() => setSelectedClient(null)}>
             <ArrowLeft className="w-4 h-4 mr-1" /> Voltar
           </Button>
-          <div>
-            <h2 className="text-lg font-bold text-foreground">{selectedClient.name}</h2>
-            <p className="text-xs text-muted-foreground">
+          <div className="min-w-0 flex-1">
+            <h2 className="text-lg font-bold text-foreground break-words">{selectedClient.name}</h2>
+            <p className="text-xs text-muted-foreground break-words">
               {[selectedClient.property_name, selectedClient.service_type].filter(Boolean).join(" · ")}
             </p>
           </div>
@@ -329,9 +329,9 @@ export default function ClientesView() {
         {/* Expenses section */}
         <Card className="bg-card border-border/50">
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-semibold">Despesas Vinculadas a Este Cliente</CardTitle>
-              <span className="text-sm font-bold font-mono text-warning">
+            <div className="flex items-center justify-between gap-2">
+              <CardTitle className="text-sm font-semibold min-w-0 break-words">Despesas Vinculadas a Este Cliente</CardTitle>
+              <span className="text-sm font-bold font-mono text-warning shrink-0 whitespace-nowrap">
                 R${totalExpenses.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </span>
             </div>
@@ -344,9 +344,9 @@ export default function ClientesView() {
             ) : (
               <div className="space-y-1.5">
                 {expenses.map((e) => (
-                  <div key={e.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-secondary/50">
+                  <div key={e.id} className="flex items-start justify-between gap-2 px-3 py-2 rounded-lg bg-secondary/50">
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm text-foreground truncate">{e.descricao}</p>
+                      <p className="text-sm text-foreground break-words">{e.descricao}</p>
                       <p className="text-[11px] text-muted-foreground">{e.categoria} · {e.data}</p>
                     </div>
                     <span className="text-sm font-mono font-bold text-warning shrink-0">
@@ -393,7 +393,7 @@ export default function ClientesView() {
                   >
                     <FileText className="w-4 h-4 text-primary flex-shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-foreground truncate">{f.name.replace(/^\d+_/, "")}</p>
+                      <p className="text-sm text-foreground break-words">{f.name.replace(/^\d+_/, "")}</p>
                       <p className="text-[10px] text-muted-foreground">
                         {f.metadata?.size ? formatFileSize(f.metadata.size) : ""}
                       </p>
@@ -524,16 +524,16 @@ export default function ClientesView() {
                   {client.name.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground truncate">{client.name}</p>
-                  <div className="flex items-center gap-3 text-[11px] text-muted-foreground mt-0.5">
+                  <p className="text-sm font-semibold text-foreground break-words">{client.name}</p>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground mt-0.5">
                     {client.property_name && (
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3" /> {client.property_name}
+                      <span className="flex items-center gap-1 break-words">
+                        <MapPin className="w-3 h-3 shrink-0" /> {client.property_name}
                       </span>
                     )}
                     {client.service_type && (
-                      <span className="flex items-center gap-1">
-                        <Briefcase className="w-3 h-3" /> {client.service_type}
+                      <span className="flex items-center gap-1 break-words">
+                        <Briefcase className="w-3 h-3 shrink-0" /> {client.service_type}
                       </span>
                     )}
                   </div>
