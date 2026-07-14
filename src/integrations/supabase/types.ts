@@ -181,6 +181,7 @@ export type Database = {
       finances: {
         Row: {
           categoria: string
+          client_id: string | null
           created_at: string
           data: string
           descricao: string
@@ -191,6 +192,7 @@ export type Database = {
         }
         Insert: {
           categoria?: string
+          client_id?: string | null
           created_at?: string
           data?: string
           descricao?: string
@@ -201,6 +203,7 @@ export type Database = {
         }
         Update: {
           categoria?: string
+          client_id?: string | null
           created_at?: string
           data?: string
           descricao?: string
@@ -209,7 +212,15 @@ export type Database = {
           user_id?: string
           valor?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "finances_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {

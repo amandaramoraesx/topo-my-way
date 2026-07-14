@@ -10,18 +10,26 @@ interface Financa {
   descricao: string;
   valor: number;
   categoria: string;
+  client_id: string | null;
+}
+
+interface ClienteOption {
+  id: string;
+  name: string;
 }
 
 export default function FinanceiroView() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [financas, setFinancas] = useState<Financa[]>([]);
+  const [clientes, setClientes] = useState<ClienteOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [tipo, setTipo] = useState("receita");
   const [data, setData] = useState(new Date().toISOString().slice(0, 10));
   const [desc, setDesc] = useState("");
   const [valor, setValor] = useState("");
   const [cat, setCat] = useState("Georreferenciamento");
+  const [clienteId, setClienteId] = useState("");
   const [filtro, setFiltro] = useState("todos");
 
   const fetchFinancas = useCallback(async () => {
@@ -34,13 +42,20 @@ export default function FinanceiroView() {
     } else {
       setFinancas((rows || []).map((f: any) => ({
         id: f.id, tipo: f.tipo, data: f.data, descricao: f.descricao,
-        valor: Number(f.valor), categoria: f.categoria,
+        valor: Number(f.valor), categoria: f.categoria, client_id: f.client_id ?? null,
       })));
     }
     setLoading(false);
   }, [toast]);
 
-  useEffect(() => { fetchFinancas(); }, [fetchFinancas]);
+  const fetchClientes = useCallback(async () => {
+    const { data: rows, error } = await supabase.from("clients").select("id, name").order("name");
+    if (!error) setClientes((rows || []) as ClienteOption[]);
+  }, []);
+
+  useEffect(() => { fetchFinancas(); fetchClientes(); }, [fetchFinancas, fetchClientes]);
+
+  const getClienteName = (id: string | null) => clientes.find(c => c.id === id)?.name || null;
 
   const mes = new Date().getMonth();
   const ano = new Date().getFullYear();
@@ -61,13 +76,14 @@ export default function FinanceiroView() {
       descricao: desc,
       valor: parseFloat(valor),
       categoria: cat,
+      client_id: clienteId || null,
     });
     if (error) {
       toast({ title: "Erro ao salvar", description: error.message, variant: "destructive" });
       return;
     }
     toast({ title: "Lançamento salvo! ✅" });
-    setDesc(""); setValor("");
+    setDesc(""); setValor(""); setClienteId("");
     fetchFinancas();
   };
 
@@ -133,6 +149,13 @@ export default function FinanceiroView() {
                 </select>
               </div>
             </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wide">Cliente vinculado (opcional)</label>
+              <select value={clienteId} onChange={e => setClienteId(e.target.value)} className="bg-secondary border border-border text-foreground px-3 py-2 rounded-md text-[13px] focus:outline-none focus:border-primary">
+                <option value="">— Nenhum —</option>
+                {clientes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
             <button onClick={adicionar} className="w-full px-4 py-2.5 rounded-lg text-[13px] font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all">+ Adicionar Lançamento</button>
           </div>
         </div>
@@ -154,7 +177,9 @@ export default function FinanceiroView() {
                 <div key={f.id} className="flex items-center justify-between px-3 md:px-3.5 py-2.5 border-b border-border gap-2">
                   <div className="min-w-0 flex-1">
                     <div className="text-[13px] truncate">{f.descricao}</div>
-                    <div className="text-[11px] text-muted-foreground truncate">{f.categoria} · {f.data}</div>
+                    <div className="text-[11px] text-muted-foreground truncate">
+                      {f.categoria} · {f.data}{getClienteName(f.client_id) ? ` · 👤 ${getClienteName(f.client_id)}` : ""}
+                    </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className={`font-mono text-[12px] md:text-[13px] font-bold whitespace-nowrap ${f.tipo === "receita" ? "text-success" : f.tipo === "despesa" ? "text-warning" : ""}`}>

@@ -30,6 +30,14 @@ interface ClientFile {
   metadata: { size?: number; mimetype?: string };
 }
 
+interface ClientExpense {
+  id: string;
+  data: string;
+  descricao: string;
+  valor: number;
+  categoria: string;
+}
+
 function formatFileSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -58,6 +66,10 @@ export default function ClientesView() {
   const [files, setFiles] = useState<ClientFile[]>([]);
   const [filesLoading, setFilesLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+
+  // Expenses state
+  const [expenses, setExpenses] = useState<ClientExpense[]>([]);
+  const [expensesLoading, setExpensesLoading] = useState(false);
 
   const fetchClients = useCallback(async () => {
     if (!user) return;
@@ -174,6 +186,29 @@ export default function ClientesView() {
     if (selectedClient) fetchFiles(selectedClient.id);
   }, [selectedClient, fetchFiles]);
 
+  // === Expenses linked to this client ===
+  const fetchExpenses = useCallback(async (clientId: string) => {
+    setExpensesLoading(true);
+    const { data, error } = await supabase
+      .from("finances")
+      .select("id, data, descricao, valor, categoria")
+      .eq("client_id", clientId)
+      .eq("tipo", "despesa")
+      .order("data", { ascending: false });
+    if (error) {
+      setExpenses([]);
+    } else {
+      setExpenses((data || []).map((e) => ({ ...e, valor: Number(e.valor) })));
+    }
+    setExpensesLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (selectedClient) fetchExpenses(selectedClient.id);
+  }, [selectedClient, fetchExpenses]);
+
+  const totalExpenses = expenses.reduce((s, e) => s + e.valor, 0);
+
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!user || !selectedClient || !e.target.files?.length) return;
     setUploading(true);
@@ -277,6 +312,39 @@ export default function ClientesView() {
               <span className="text-muted-foreground">Obs:</span>{" "}
               <span className="text-foreground">{selectedClient.notes || "—"}</span>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Expenses section */}
+        <Card className="bg-card border-border/50">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-semibold">Despesas Vinculadas a Este Cliente</CardTitle>
+              <span className="text-sm font-bold font-mono text-warning">
+                R${totalExpenses.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            {expensesLoading ? (
+              <p className="text-sm text-muted-foreground py-4 text-center">Carregando...</p>
+            ) : expenses.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-4 text-center">Nenhuma despesa vinculada a este cliente ainda</p>
+            ) : (
+              <div className="space-y-1.5">
+                {expenses.map((e) => (
+                  <div key={e.id} className="flex items-center justify-between px-3 py-2 rounded-lg bg-secondary/50">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-foreground truncate">{e.descricao}</p>
+                      <p className="text-[11px] text-muted-foreground">{e.categoria} · {e.data}</p>
+                    </div>
+                    <span className="text-sm font-mono font-bold text-warning shrink-0">
+                      -R${e.valor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
