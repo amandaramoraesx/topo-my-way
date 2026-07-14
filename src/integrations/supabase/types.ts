@@ -143,6 +143,7 @@ export type Database = {
           phone: string | null
           role: string | null
           salary: number | null
+          saturday_holiday_rate: number
           updated_at: string
           user_id: string
           work_hours_per_day: number
@@ -156,6 +157,7 @@ export type Database = {
           phone?: string | null
           role?: string | null
           salary?: number | null
+          saturday_holiday_rate?: number
           updated_at?: string
           user_id: string
           work_hours_per_day?: number
@@ -169,6 +171,7 @@ export type Database = {
           phone?: string | null
           role?: string | null
           salary?: number | null
+          saturday_holiday_rate?: number
           updated_at?: string
           user_id?: string
           work_hours_per_day?: number
