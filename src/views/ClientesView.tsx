@@ -88,6 +88,11 @@ export default function ClientesView() {
 
   useEffect(() => {
     fetchClients();
+    const channel = supabase
+      .channel("clientes-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, () => fetchClients())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, [fetchClients]);
 
   const resetForm = () => {
@@ -204,7 +209,13 @@ export default function ClientesView() {
   }, []);
 
   useEffect(() => {
-    if (selectedClient) fetchExpenses(selectedClient.id);
+    if (!selectedClient) return;
+    fetchExpenses(selectedClient.id);
+    const channel = supabase
+      .channel(`cliente-despesas-${selectedClient.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "finances", filter: `client_id=eq.${selectedClient.id}` }, () => fetchExpenses(selectedClient.id))
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, [selectedClient, fetchExpenses]);
 
   const totalExpenses = expenses.reduce((s, e) => s + e.valor, 0);

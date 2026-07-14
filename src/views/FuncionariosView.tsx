@@ -66,7 +66,16 @@ export default function FuncionariosView() {
 
   const [payrollEmployee, setPayrollEmployee] = useState("");
   const [payrollRefDate, setPayrollRefDate] = useState(new Date().toISOString().slice(0, 10));
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => {
+    loadData();
+    const channel = supabase
+      .channel("funcionarios-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "employees" }, () => loadData())
+      .on("postgres_changes", { event: "*", schema: "public", table: "time_records" }, () => loadData())
+      .on("postgres_changes", { event: "*", schema: "public", table: "employee_payments" }, () => loadData())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   async function loadData() {
     setLoading(true);

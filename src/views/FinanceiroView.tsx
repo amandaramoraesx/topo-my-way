@@ -53,7 +53,16 @@ export default function FinanceiroView() {
     if (!error) setClientes((rows || []) as ClienteOption[]);
   }, []);
 
-  useEffect(() => { fetchFinancas(); fetchClientes(); }, [fetchFinancas, fetchClientes]);
+  useEffect(() => {
+    fetchFinancas();
+    fetchClientes();
+    const channel = supabase
+      .channel("financeiro-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "finances" }, () => fetchFinancas())
+      .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, () => fetchClientes())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchFinancas, fetchClientes]);
 
   const getClienteName = (id: string | null) => clientes.find(c => c.id === id)?.name || null;
 
